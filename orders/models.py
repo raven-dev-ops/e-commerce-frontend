@@ -23,6 +23,12 @@ ORDER_STATUS_CHOICES = [
     ('canceled', 'Canceled'),
     ('failed', 'Payment Failed'),
 ]
+
+class OrderItem(EmbeddedDocument):
+    product_id = fields.StringField(required=True)  # To store the MongoDB ObjectId as a string
+    quantity = fields.IntField(required=True, min_value=1)
+
+
 class Order(Document):
     user = fields.IntField(required=True) # To store the Django user ID
     created_at = fields.DateTimeField(required=True)
@@ -34,12 +40,8 @@ class Order(Document):
     shipping_address = fields.ReferenceField(Address, required=False)
     billing_address = fields.ReferenceField(Address, required=False)
     discount_code = fields.StringField(null=True)
+    shipped_date = fields.DateTimeField(null=True)
     discount_type = fields.StringField(choices=['percentage', 'fixed'], null=True)
     discount_value = fields.FloatField(null=True)
     discount_amount = fields.FloatField(null=True)
     items = fields.ListField(fields.EmbeddedDocumentField(OrderItem))
-
-class OrderItem(EmbeddedDocument):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    product_id = models.CharField(max_length=24)  # To store the MongoDB ObjectId as a string
-    quantity = models.PositiveIntegerField()

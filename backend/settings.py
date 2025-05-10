@@ -30,8 +30,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_mongoengine',
+    'django_mongoengine.mongo_admin',
     'django.contrib.sites', # For sites framework (optional but good practice)
     'rest_framework.authtoken', # For DRF token authentication
+    'rest_framework_mongoengine',
+    'djangorestframework-mongoengine',
     # 3rd-party
     'corsheaders',
     'django_filters',
@@ -86,6 +90,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': ':memory:',
+    }
+}
+
+MONGODB_DATABASES = {
+    'default': {
+        'name': 'your_db_name',
+        'host': 'localhost',
+        'port': 27017,
+        'username': 'your_username',
+        'password': 'your_password',
+        'authentication_source': 'admin',
+        'authentication_database': 'admin'
     }
 }
 SITE_ID = 1

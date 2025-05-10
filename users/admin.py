@@ -1,8 +1,4 @@
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+# users/admin.py
 from .models import User
-
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    # if you added extra fields, list them here; otherwise default is fine
-    pass
+from django_mongoengine.mongo_admin.sites import site as mongo_admin_site
+mongo_admin_site.register(User)

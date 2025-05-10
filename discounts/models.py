@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, FloatField, BooleanField, DateTimeField, IntField, ListField, ReferenceField
-from products.models import Product, Category # Assuming you have a Category model in products.models
+from products.models import Product, Category
 
 
 class Discount(Document):
@@ -16,3 +16,4 @@ class Discount(Document):
     target_categories = ListField(ReferenceField(Category), null=True)
     is_automatic = BooleanField(default=False)
     is_free_shipping = BooleanField(default=False)
+    category = ReferenceField(Category, null=True)

@@ -1,9 +1,8 @@
-from rest_framework import serializers
 from .models import Review
 from authentication.models import User
-from products.models import Product
-
-
+from .models import Product
+from djangorestframework_mongoengine.serializers import DocumentSerializer
+from rest_framework_mongoengine.serializers import DocumentSerializer
 class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
     product = serializers.CharField(source='product.name', read_only=True)
