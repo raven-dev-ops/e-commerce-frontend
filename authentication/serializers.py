@@ -28,7 +28,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         """
         Returns the user's default billing address.
         """
-class AddressSerializer(serializers.DocumentSerializer):
+from rest_framework_mongoengine.serializers import DocumentSerializer
+class AddressSerializer(DocumentSerializer):
     class Meta:
         model = Address
         fields = ('user', 'street', 'city', 'state', 'country', 'zip_code', 'is_default_shipping', 'is_default_billing')

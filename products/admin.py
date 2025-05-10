@@ -1,8 +1,5 @@
-from django.contrib import admin
+from django_mongoengine.mongo_admin.sites import site as mongo_admin_site
 from .models import Product
+from django_mongoengine.mongo_admin.options import DocumentAdmin
 
-# Temporarily commented out as Product is a mongoengine Document
-# @admin.register(Product)
-# class ProductAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'name', 'price', 'inventory')
-#     search_fields = ('name',)
+mongo_admin_site.register(Product)

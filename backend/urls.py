@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django_mongoengine.mongo_admin import site as mongo_admin_site
 from rest_framework.routers import DefaultRouter
 from products.views import ProductViewSet
 from orders.views import CartViewSet
@@ -34,6 +35,7 @@ router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'addresses', AddressViewSet, basename='address')
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('mongo-admin/', mongo_admin_site.urls),
     path('api/', include(router.urls)),
     path('api/register/', UserRegistrationView.as_view(), name='user-registration'),
     path('api/login/', obtain_auth_token, name='api_token_auth'),

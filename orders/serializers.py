@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from orders.models import Cart, CartItem, Order, OrderItem
 from authentication.serializers import AddressSerializer
-
+from mongoengine.rest_framework import DocumentSerializer
 from discounts.serializers import DiscountSerializer
 class CartItemSerializer(serializers.Serializer):
     product_id = serializers.CharField(max_length=24)  # Assuming ObjectId is 24 chars
@@ -30,12 +30,12 @@ class CartSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-class OrderItemSerializer(serializers.ModelSerializer):
+class OrderItemSerializer(DocumentSerializer):
     class Meta:
         model = OrderItem
         fields = ['product', 'quantity', 'price']
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(DocumentSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     shipping_address = AddressSerializer(read_only=True)
     billing_address = AddressSerializer(read_only=True)
