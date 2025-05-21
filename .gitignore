@@ -1,45 +1,56 @@
 gitignore
-# Byte-code files
-*.pyc
+# Dependency directories
+node_modules/
+venv/
+.venv/
 __pycache__/
 
-# Distribution / packaging
-.Python
-env/
-venv/
-build/
-develop-eggs/
-dist/
-eggs/
-*.egg-info
-.installed.cfg
-*.egg
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Test and coverage
-.coverage
-.tox/
-.pytest_cache/
+# Next.js build artifacts
+.next/
+out/
 
-# IDEs
+# Python bytecode
+*.pyc
+
+# IDE and OS files
 .vscode/
 .idea/
-*.swp
-*.bak
-*.un~
-*.swo
-
-# Virtual environment
-.venv/
-venv/
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Django specific
-*.log
-*.pot
-*.mo
+# Database files
 *.sqlite3
-media/
-static/
+*.db
+
+# Log files
+*.log
+
+# Uploaded files (if applicable, adjust path)
+media/ # Example path for uploaded files
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# yarn and npm lock files (optional, but often useful to ignore one if you use the other)
+package-lock.json # if using yarn
+yarn.lock # if using npm
+
+# npm debug logs
+npm-debug.log*
+
+# Docker
+# .dockerignore might be more appropriate for Docker-specific ignores, but often included here
+# docker-compose.override.yml # If you have local overrides you don't want to commit
+
+# Python specific
+*.egg-info/
+dist/
+build/
