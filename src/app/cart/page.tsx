@@ -28,7 +28,7 @@ export default function CartPage() {
       setError(null);
 
       const ids = Array.from(new Set(cart.map(item => item.productId)));
-      const detailsMap: { [id: string]: { _id?: string | number; product_name?: string; price?: number; image?: string; error?: boolean; message?: string } | null } = {};\n
+      const detailsMap: { [id: string]: { _id?: string | number; product_name?: string; price?: number; image?: string; error?: boolean; message?: string } | null } = {};
 
       await Promise.all(ids.map(async (id) => {
         setProductDetails(prev => ({ ...prev, [id]: { loading: true } }));
