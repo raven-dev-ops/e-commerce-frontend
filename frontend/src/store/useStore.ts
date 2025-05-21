@@ -10,6 +10,8 @@ interface StoreState {
   cart: CartItem[];
   addToCart: (productId: number, qty?: number) => void;
   clearCart: () => void;
+  updateCartItemQuantity: (productId: number, newQuantity: number) => void;
+  removeFromCart: (productId: number) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -31,4 +33,21 @@ export const useStore = create<StoreState>((set) => ({
       };
     }),
   clearCart: () => set({ cart: [] }),
+  updateCartItemQuantity: (productId, newQuantity) =>
+    set((state) => {
+      if (newQuantity <= 0) {
+        return {
+          cart: state.cart.filter((item) => item.productId !== productId),
+        };
+      }
+      return {
+        cart: state.cart.map((item) =>
+          item.productId === productId ? { ...item, quantity: newQuantity } : item
+        ),
+      };
+    }),
+  removeFromCart: (productId) =>
+    set((state) => ({
+      cart: state.cart.filter((item) => item.productId !== productId),
+    })),
 }));
