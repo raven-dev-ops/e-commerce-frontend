@@ -24,8 +24,8 @@ async function getProduct(productId: string): Promise<Product | null> {
       throw new Error('Failed to fetch product details');
     }
     return res.json();
-  } catch (_error) {
-    throw new Error(`Failed to fetch product details: ${_error}`);
+  } catch (error) {
+    throw new Error(`Failed to fetch product details: ${error}`);
   }
 }
 
@@ -43,8 +43,8 @@ export default async function ProductDetailPage({ params }: Props) {
 
   try {
     product = await getProduct(productId);
-  } catch (_error) {
-    console.error('Error in ProductDetailPage:', _error);
+  } catch (error) {
+    console.error('Error in ProductDetailPage:', error);
     error = 'Failed to fetch product details.';
   }
 
