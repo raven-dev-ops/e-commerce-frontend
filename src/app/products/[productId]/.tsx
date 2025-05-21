@@ -29,29 +29,13 @@ async function getProduct(productId: string): Promise<Product | null> {
   }
 }
 
-type Props = {
-  params: {
-    productId: string;
-  };
+type PageProps = {
+  params: { productId: string };
   searchParams?: Record<string, string | string[] | undefined>;
 };
 
-export default async function ProductDetailPage({ params}: Props) {
-  const { productId } = params;
-
-  let product: Product | null = null;
-  let fetchError: string | null = null;
-
-  try {
-    product = await getProduct(productId);
-  } catch (err) {
-    console.error('Error in ProductDetailPage:', err);
-    fetchError = 'Failed to fetch product details.';
-  }
-
-  if (fetchError) {
-    return <div>Error: {fetchError}</div>;
-  }
+export default async function ProductDetailPage({ params }: PageProps) {
+  const product = await getProduct(params.productId);
 
   if (!product) {
     notFound();
