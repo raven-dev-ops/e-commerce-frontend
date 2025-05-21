@@ -80,8 +80,8 @@ export default function Checkout() {
         }
       );
       clearCart();
-      window.location.href = '/'; // Redirect on success
-    } catch (err) {
+      window.location.href = '/';
+    } catch {
       setLoading(false);
     }
   };
