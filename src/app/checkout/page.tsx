@@ -89,10 +89,9 @@ export default function Checkout() {
     }
 
  try {
- await api.post('/orders/', {
- payment_method_id: paymentMethod.id,
-          },
-        }
+      await api.post('/orders/', {
+        payment_method_id: paymentMethod.id,
+      }
       );
 
       clearCart();
