@@ -3,7 +3,6 @@ gitignore
 node_modules/
 venv/
 .venv/
-__pycache__/
 
 # Environment variables
 .env
@@ -15,9 +14,6 @@ __pycache__/
 # Next.js build artifacts
 .next/
 out/
-
-# Python bytecode
-*.pyc
 
 # IDE and OS files
 .vscode/
