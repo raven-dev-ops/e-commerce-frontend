@@ -14,6 +14,13 @@ interface ProductDetails {
 
 import { loadStripe } from '@stripe/stripe-js';
 
+const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY;
+if (!stripePublicKey) {
+  throw new Error('Stripe public key not found in environment variables');
+}
+
+const stripePromise = loadStripe(stripePublicKey);
+
 export default function Checkout() {
   const stripe = useStripe();
   const elements = useElements();
@@ -103,13 +110,6 @@ export default function Checkout() {
       setLoading(false);
     }
   };
-
-const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY;
-if (!stripePublicKey) {
-  throw new Error('Stripe public key not found in environment variables');
-}
-const stripePromise = loadStripe(stripePublicKey);
-
   return (
     <div className="max-w-md mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Checkout</h1>
