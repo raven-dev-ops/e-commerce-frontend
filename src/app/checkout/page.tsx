@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useStore } from '@/store/useStore';
 import { api } from '@/lib/api';
-import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
 interface ProductDetails {
@@ -16,7 +15,6 @@ interface ProductDetails {
 export default function Checkout() {
   const stripe = useStripe();
   const elements = useElements();
-  const { data: session } = useSession();
 
   const cart = useStore(state => state.cart);
   const clearCart = useStore(state => state.clearCart);
@@ -90,16 +88,9 @@ export default function Checkout() {
       return;
     }
 
-    try {
-      await api.post(
-        '/orders/',
-        {
-          payment_method_id: paymentMethod.id,
-          items: cart,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.access}`,
+ try {
+ await api.post('/orders/', {
+ payment_method_id: paymentMethod.id,
           },
         }
       );
