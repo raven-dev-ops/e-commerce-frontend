@@ -2,7 +2,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/api',
+  baseURL: 'https://twiinz-beard-website-ff3fce7fad2d.herokuapp.com/api/',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -26,3 +26,9 @@ api.interceptors.request.use(
 );
 
 export { api };
+
+export const logout = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('accessToken');
+  }
+};

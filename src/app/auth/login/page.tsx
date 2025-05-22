@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { loginWithEmailPassword } from '@/lib/auth'; // Import the custom login function
 import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation in App Router
 
 export default function Login() {
@@ -12,15 +12,14 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-    if (res?.error) {
-      setErrorMsg(res.error);
-    } else {
+    try {
+      const { token } = await loginWithEmailPassword(email, password); // Call the custom login function
+      localStorage.setItem('accessToken', token); // Store the token
+      setErrorMsg(null); // Clear any previous errors
       router.push('/');
+    } catch (error: any) {
+      // Handle login errors (e.g., display a message)
+      setErrorMsg(error.response?.data?.detail || 'Login failed');
     }
   };
 
