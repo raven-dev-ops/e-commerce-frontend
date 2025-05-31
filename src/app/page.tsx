@@ -6,8 +6,9 @@ export default function Home() {
       backgroundPosition: 'center',
       width: '100vw',
       height: '100vh',
+      position: 'relative',
     }}>
-      <div className="flex flex-col items-center justify-center text-white text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
         <h1 className="text-3xl">Under Construction</h1>
       </div>
     </div>
