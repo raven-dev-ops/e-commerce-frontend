@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 interface RootLayoutProps {
   metadata: Metadata;
-  children: React.ReactNode; // Ensure children prop is defined here
+  children: React.ReactNode;
 }
 
 const RootLayout: React.FC<RootLayoutProps> = ({ metadata, children }) => {
