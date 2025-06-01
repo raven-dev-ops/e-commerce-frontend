@@ -11,6 +11,29 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+// Define an interface for the raw product data from the API response
+interface ApiResponseProduct {
+  _id: string | { $oid: string };
+  product_name: string;
+  price: string | number;
+  description?: string;
+  image?: string;
+  images?: string[];
+  ingredients?: string[];
+  benefits?: string[];
+  category?: string;
+  variants?: any[]; 
+  tags?: string[];
+  availability?: boolean;
+  variations?: any[];
+  weight?: number | null;
+  dimensions?: any | null;
+  inventory?: number;
+  reserved_inventory?: number;
+  average_rating?: number;
+  review_count?: number;
+}
+
 async function getProducts(): Promise<Product[]> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.endsWith('/')
     ? process.env.NEXT_PUBLIC_API_BASE_URL.slice(0, -1)
@@ -23,13 +46,14 @@ async function getProducts(): Promise<Product[]> {
   if (!res.ok) throw new Error('Failed to fetch products');
 
   const data = await res.json();
-  // Normalize _id to always be a string
-  return data.results.map((product: any) => ({
+
+  // Map the raw API response to the Product type
+  return data.results.map((product: ApiResponseProduct): Product => ({
     ...product,
     _id: typeof product._id === "object" && product._id !== null && "$oid" in product._id
       ? product._id.$oid
-      : product._id,
-    price: Number(product.price),
+      : String(product._id), // Ensure _id is always a string
+    price: Number(product.price), // Ensure price is a number
   }));
 }
 
