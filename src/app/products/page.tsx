@@ -104,13 +104,49 @@ export default function ProductsPage() {
     })();
   }, []);
 
-  // Settings for react-slick carousel
-  const settings = {
+  // Settings for react-slick carousel with multiple items
+  const multiItemSettings = {
     dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          initialSlide: 2
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
+
+  // Settings for react-slick carousel with a single item (placeholder)
+  const singleItemSettings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
   };
 
   return (
@@ -125,26 +161,35 @@ export default function ProductsPage() {
           <p>No defined categories.</p>
         ) : (
           <div>
-            {categories.map(category => (
-              <div key={category} className="mb-8">
-                <h2 className="text-xl font-bold mb-3 capitalize">{category}</h2>
-                <Slider {...settings}>
-                  {productsByCategory[category] && productsByCategory[category].length > 0 ? (
-                    productsByCategory[category].map(p => (
-                      <div key={p._id} className="px-2"> {/* Added padding for spacing in carousel */}
-                        <ProductItem product={p} />
+            {categories.map(category => {
+              // Determine which settings to use based on whether there are products in the category
+              const currentSettings = productsByCategory[category] && productsByCategory[category].length > 0
+                ? multiItemSettings
+                : singleItemSettings;
+
+              console.log(`Category: ${category}, Using settings:`, currentSettings);
+
+              return (
+                <div key={category} className="mb-8">
+                  <h2 className="text-xl font-bold mb-3 capitalize">{category}</h2>
+                  <Slider {...currentSettings}> {/* Use the determined settings */}
+                    {productsByCategory[category] && productsByCategory[category].length > 0 ? (
+                      productsByCategory[category].map(p => (
+                        <div key={p._id} className="px-2"> {/* Added padding for spacing in carousel */}
+                          <ProductItem product={p} />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-2"> {/* Wrap placeholder in px-2 div */}
+                        <div className="flex items-center justify-center h-48 w-full">
+                          <p>No products available in this category.</p>
+                        </div>
                       </div>
-                    ))
-                  ) : (
-                    <div className="px-2"> {/* Wrap placeholder in px-2 div */}
-                      <div className="flex items-center justify-center h-48 w-full">
-                        <p>No products available in this category.</p>
-                      </div>
-                    </div>
-                  )}
-                </Slider>
-              </div>
-            ))}
+                    )}
+                  </Slider>
+                </div>
+              );
+            })}
           </div>
         )
       )}
