@@ -11,8 +11,8 @@ interface Product {
   product_name: string;
   price: number | string;
   description?: string;
-  image?: string; // This should now be the filename from the backend
-  images?: string[]; // These should also be filenames
+  image?: string;
+  images?: string[];
   ingredients?: string[];
   benefits?: string[];
 }
@@ -21,15 +21,12 @@ interface ProductDetailsClientProps {
   product: Product;
 }
 
-const FALLBACK_IMAGE = "/images/beard-balm.jpg"; // Use your real fallback image path in the public directory
+const FALLBACK_IMAGE = "/images/products/beard-balm.jpg"; // Assuming fallback is in products folder
 
-// Helper function to construct the full image URL relative to /public
 const getPublicImageUrl = (imageFileName?: string) => {
-  if (!imageFileName) return undefined; // Or return a fallback local image path
-  // Assuming images are in public/images/products/ and backend provides just the filename
-  // If backend provides a path like /media/products/filename.jpg, you might need to adjust this
-  const fileName = imageFileName.split('/').pop(); // Extract filename if path is provided
-  if (!fileName) return undefined; // Handle cases where split fails
+  if (!imageFileName) return undefined;
+  const fileName = imageFileName.split('/').pop();
+  if (!fileName) return undefined;
   return `/images/products/${fileName}`;
 };
 
@@ -37,6 +34,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
   const { addToCart } = useStore();
 
   const handleAddToCart = () => {
+    // Only cast if necessary; otherwise use product._id directly
     const id = typeof product._id === "number" ? product._id : Number(product._id);
     if (!isNaN(id)) addToCart(id);
   };
@@ -44,16 +42,13 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
   const price = Number(product.price);
   const formattedPrice = !isNaN(price) ? price.toFixed(2) : "0.00";
 
-  // Determine which images to show, using the helper to get public paths
   let imagesToShow: string[] = [];
   if (Array.isArray(product.images) && product.images.length > 0) {
-    imagesToShow = product.images.map(img => getPublicImageUrl(img)).filter(Boolean) as string[]; // Map and filter out any undefined
+    imagesToShow = product.images.map(getPublicImageUrl).filter(Boolean) as string[];
   } else if (product.image) {
     const publicPath = getPublicImageUrl(product.image);
     if (publicPath) imagesToShow = [publicPath];
   }
-
-  // If no images are found, use the fallback
   if (imagesToShow.length === 0) {
     imagesToShow = [FALLBACK_IMAGE];
   }
@@ -75,7 +70,6 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
           </div>
         ))}
       </div>
-
       {/* Product Info */}
       <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
       <p className="text-lg font-semibold mb-2">${formattedPrice}</p>
