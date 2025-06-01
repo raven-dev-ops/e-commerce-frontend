@@ -5,20 +5,10 @@
 import React from "react";
 import Image from "next/image";
 import { useStore } from "@/store/useStore";
-
-interface Product {
-  _id: string | number;
-  product_name: string;
-  price: number | string;
-  description?: string;
-  image?: string;
-  images?: string[];
-  ingredients?: string[];
-  benefits?: string[];
-}
+import type { Product } from '@/types/product'; // Import the shared Product type
 
 interface ProductDetailsClientProps {
-  product: Product;
+  product: Product; // Use the imported Product type
 }
 
 const FALLBACK_IMAGE = "/images/products/beard-balm.jpg"; // Fallback image in products folder
@@ -35,10 +25,12 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
   const { addToCart } = useStore();
 
   const handleAddToCart = () => {
+    // Use product._id for adding to cart
     const id = typeof product._id === "number" ? product._id : Number(product._id);
     if (!isNaN(id)) addToCart(id);
   };
 
+  // Ensure price is treated as a number
   const price = Number(product.price);
   const formattedPrice = !isNaN(price) ? price.toFixed(2) : "0.00";
 
