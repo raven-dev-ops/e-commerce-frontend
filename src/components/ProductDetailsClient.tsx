@@ -21,11 +21,12 @@ interface ProductDetailsClientProps {
   product: Product;
 }
 
-const FALLBACK_IMAGE = "/images/products/beard-balm.jpg"; // Assuming fallback is in products folder
+const FALLBACK_IMAGE = "/images/products/beard-balm.jpg"; // Fallback image in products folder
 
-const getPublicImageUrl = (imageFileName?: string) => {
-  if (!imageFileName) return undefined;
-  const fileName = imageFileName.split('/').pop();
+// Always resolve to the filename, then use products folder
+const getPublicImageUrl = (input?: string) => {
+  if (!input) return undefined;
+  const fileName = input.split("/").pop(); // Handles '/images/foo.jpg', '/media/bar.jpg', 'baz.jpg'
   if (!fileName) return undefined;
   return `/images/products/${fileName}`;
 };
@@ -34,7 +35,6 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
   const { addToCart } = useStore();
 
   const handleAddToCart = () => {
-    // Only cast if necessary; otherwise use product._id directly
     const id = typeof product._id === "number" ? product._id : Number(product._id);
     if (!isNaN(id)) addToCart(id);
   };
@@ -44,7 +44,9 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
 
   let imagesToShow: string[] = [];
   if (Array.isArray(product.images) && product.images.length > 0) {
-    imagesToShow = product.images.map(getPublicImageUrl).filter(Boolean) as string[];
+    imagesToShow = product.images
+      .map(getPublicImageUrl)
+      .filter((src): src is string => Boolean(src));
   } else if (product.image) {
     const publicPath = getPublicImageUrl(product.image);
     if (publicPath) imagesToShow = [publicPath];
@@ -66,10 +68,12 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
               className="rounded object-cover"
               sizes="(max-width: 768px) 100vw, 33vw"
               priority={i === 0}
+              // You can add onError here in future for even more graceful fallback
             />
           </div>
         ))}
       </div>
+
       {/* Product Info */}
       <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
       <p className="text-lg font-semibold mb-2">${formattedPrice}</p>
