@@ -13,7 +13,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 // Define an interface for the raw product data from the API response
 interface ApiResponseProduct {
-  _id: string | { $oid: string } | null | undefined; // Allow null/undefined for robustness
+  id: string; // Backend sends ID as 'id' string
+  _id?: string | { $oid: string } | null | undefined; // Keep this optional if the backend might still send it
   product_name: string;
   price: string | number;
   description?: string;
@@ -47,17 +48,15 @@ async function getProducts(): Promise<Product[]> {
 
   const data = await res.json();
 
-  // Map the raw API response to the Product type, normalize _id and price
+  // Map the raw API response to the Product type, using 'id' for _id and normalizing price
   const products = data.results.map((product: ApiResponseProduct): Product => ({
     ...product,
-    _id: typeof product._id === "object" && product._id !== null && "$oid" in product._id
-      ? product._id.$oid
-      : String(product._id), // Ensure _id is always a string
+    _id: String(product.id), // Use product.id from the backend response
     price: Number(product.price), // Ensure price is a number
   }));
 
   // Filter out products where _id is not a valid non-empty string
-  const filteredProducts = products.filter((product: Product) => { // Explicitly type product here
+  const filteredProducts = products.filter((product: Product) => { 
     const isValidId = typeof product._id === 'string' && product._id.length > 0 && product._id !== 'undefined' && product._id !== 'null';
     if (!isValidId) {
       console.warn(`Filtering out product with invalid _id: ${product.product_name || 'Unknown Product'}`);
