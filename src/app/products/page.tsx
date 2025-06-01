@@ -187,7 +187,7 @@ export default function ProductsPage() {
                           aria-label={`View details for ${p.product_name}`}
                         >
                           <div className="flex flex-col items-center group-hover:shadow-lg group-hover:ring-2 group-hover:ring-blue-400 transition rounded-xl bg-white">
-                            <div className="relative w-full h-64 bg-gray-100 overflow-hidden rounded-xl flex items-center justify-center p-4">
+                            <div className="relative w-full h-48 bg-gray-100 overflow-hidden rounded-xl flex items-center justify-center p-2">
                               <Image
                                 src={getProductImage(p)}
                                 alt={p.product_name}
@@ -197,7 +197,7 @@ export default function ProductsPage() {
                                 priority={false}
                               />
                             </div>
-                            <div className="w-full flex flex-col items-center gap-1 mt-3 px-2 pb-3">
+                            <div className="w-full flex flex-col items-center gap-1 mt-2 px-1 pb-2">
                               <span className="text-sm font-semibold text-gray-900 text-center truncate w-full">{p.product_name}</span>
                               <span className="text-sm font-bold text-blue-600">${Number(p.price).toFixed(2)}</span>
                             </div>
