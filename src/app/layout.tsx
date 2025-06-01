@@ -1,4 +1,5 @@
-/*  src/app/layout.tsx  */
+//  src/app/layout.tsx
+
 import './globals.css';
 import { Geist, Geist_Mono } from 'next/font/google';
 import ClientLayout from '@/components/ClientLayout';
