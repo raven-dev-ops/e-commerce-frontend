@@ -6,12 +6,13 @@ import Layout from '../components/Layout';
 const Page: React.FC = () => {
   return (
     <Layout>
+      {/* The background image */}
       <div className="home-background" />
-      <div className="flex flex-1 items-center justify-center w-full h-[calc(100vh-64px)]"> 
-        <h1 className="text-3xl text-white text-center drop-shadow-lg">
-          Under Construction
-        </h1>
-      </div>
+
+      {/* Centered content; no manual height calculation needed */}
+      <h1 className="text-3xl text-white text-center drop-shadow-lg z-10">
+        Under Construction
+      </h1>
     </Layout>
   );
 };
