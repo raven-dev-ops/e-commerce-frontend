@@ -20,8 +20,11 @@ async function getProducts(): Promise<Product[]> {
   if (!res.ok) throw new Error('Failed to fetch products');
   
   const data = await res.json();
-  // Extract the results array from the paginated response
-  return data.results;
+  // Extract the results array from the paginated response and ensure price is a number
+  return data.results.map((product: any) => ({
+    ...product,
+    price: Number(product.price), // Explicitly convert price to a Number
+  }));
 }
 
 export default function ProductsPage() {
