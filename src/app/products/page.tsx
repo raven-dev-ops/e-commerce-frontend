@@ -1,9 +1,7 @@
-// src/app/products/page.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
-import ProductItem from '@/components/ProductItem';
+import Image from "next/image";
 import type { Product } from '@/types/product';
 
 import Slider from 'react-slick';
@@ -108,6 +106,21 @@ const getCarouselSettings = (itemCount: number) => {
   };
 };
 
+// Helper to get product image URL (you may want to move this to a shared util)
+const FALLBACK_IMAGE = "/images/products/beard-balm.jpg";
+const getProductImage = (product: Product) => {
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    // Use first image from images array
+    const fileName = product.images[0]?.split("/").pop();
+    return fileName ? `/images/products/${fileName}` : FALLBACK_IMAGE;
+  }
+  if (product.image) {
+    const fileName = product.image.split("/").pop();
+    return fileName ? `/images/products/${fileName}` : FALLBACK_IMAGE;
+  }
+  return FALLBACK_IMAGE;
+};
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -170,7 +183,22 @@ export default function ProductsPage() {
                   <Slider {...carouselSettings}>
                     {items.map(p => (
                       <div key={p._id} className="px-2">
-                        <ProductItem product={p} />
+                        <div className="relative w-full h-64 bg-gray-100 rounded-lg flex flex-col items-center justify-center overflow-hidden p-4">
+                          <Image
+                            src={getProductImage(p)}
+                            alt={p.product_name}
+                            fill
+                            className="object-contain"
+                            sizes="(max-width: 768px) 100vw, 25vw"
+                            priority={false}
+                          />
+                          <div className="absolute bottom-3 left-0 w-full px-3">
+                            <div className="bg-white/80 rounded shadow px-2 py-1 flex flex-col items-center">
+                              <span className="text-sm font-semibold text-gray-900 truncate w-full text-center">{p.product_name}</span>
+                              <span className="text-sm font-bold text-blue-600">${Number(p.price).toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </Slider>
