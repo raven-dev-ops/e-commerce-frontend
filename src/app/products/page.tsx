@@ -186,20 +186,20 @@ export default function ProductsPage() {
                           tabIndex={0}
                           aria-label={`View details for ${p.product_name}`}
                         >
-                          <div className="relative w-full h-64 bg-gray-100 rounded-lg flex flex-col items-center justify-center overflow-hidden p-4 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-blue-400 transition">
-                            <Image
-                              src={getProductImage(p)}
-                              alt={p.product_name}
-                              fill
-                              className="object-contain"
-                              sizes="(max-width: 768px) 100vw, 25vw"
-                              priority={false}
-                            />
-                            <div className="absolute bottom-3 left-0 w-full px-3">
-                              <div className="bg-white/80 rounded shadow px-2 py-1 flex flex-col items-center">
-                                <span className="text-sm font-semibold text-gray-900 truncate w-full text-center">{p.product_name}</span>
-                                <span className="text-sm font-bold text-blue-600">${Number(p.price).toFixed(2)}</span>
-                              </div>
+                          <div className="flex flex-col items-center group-hover:shadow-lg group-hover:ring-2 group-hover:ring-blue-400 transition rounded-lg bg-white py-4">
+                            <div className="relative w-full h-64 bg-gray-100 overflow-hidden rounded-lg flex items-center justify-center">
+                              <Image
+                                src={getProductImage(p)}
+                                alt={p.product_name}
+                                fill
+                                className="object-contain"
+                                sizes="(max-width: 768px) 100vw, 25vw"
+                                priority={false}
+                              />
+                            </div>
+                            <div className="w-full flex flex-col items-center gap-1 mt-3 px-1">
+                              <span className="text-sm font-semibold text-gray-900 text-center truncate w-full">{p.product_name}</span>
+                              <span className="text-sm font-bold text-blue-600">${Number(p.price).toFixed(2)}</span>
                             </div>
                           </div>
                         </Link>
