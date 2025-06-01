@@ -51,7 +51,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
         {/* LEFT: Images */}
         <div className="flex flex-row lg:flex-col gap-4">
           {/* Thumbnails (hide if only one image) */}
@@ -105,7 +105,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
             {/* Show zoom beside on hover (desktop only) */}
             {isHovering && (
               <div
-                className="hidden lg:block absolute top-0 left-full ml-4 z-50 border rounded shadow-lg bg-white"
+                className="hidden lg:block absolute top-0 left-full ml-4 z-50 border-2 border-blue-400 rounded shadow-lg bg-white"
                 style={{
                   width: IMAGE_WIDTH,
                   height: IMAGE_HEIGHT,
@@ -118,7 +118,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
                   width={IMAGE_WIDTH * 2}
                   height={IMAGE_HEIGHT * 2}
                   className="object-contain w-full h-full"
-                  style={{ transform: "scale(1.5)" }}
+                  style={{ transform: "scale(2)" }}
                   priority
                 />
               </div>
@@ -126,17 +126,17 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
           </div>
         </div>
         {/* RIGHT: Details */}
-        <div className="flex-1 flex flex-col min-w-0 items-center">
-          <div className="flex flex-col h-full w-full max-w-md mx-auto items-center">
-            <div className="w-full text-center">
+        <div className="flex-1 flex flex-col min-w-0 max-w-xl">
+          <div className="flex flex-col h-full w-full">
+            <div>
               <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
               <p className="text-lg font-semibold mb-2">${formattedPrice}</p>
               {product.description && <p className="mb-4">{product.description}</p>}
             </div>
             {Array.isArray(product.ingredients) && product.ingredients.length > 0 && (
-              <div className="mt-6 w-full text-center">
+              <div className="mt-6">
                 <h2 className="text-2xl font-bold mb-2">Ingredients</h2>
-                <ul className="list-disc list-inside inline-block text-left">
+                <ul className="list-disc list-inside">
                   {product.ingredients.map((item, i) => (
                     <li key={i}>{item}</li>
                   ))}
@@ -144,9 +144,9 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
               </div>
             )}
             {Array.isArray(product.benefits) && product.benefits.length > 0 && (
-              <div className="mt-6 w-full text-center">
+              <div className="mt-6">
                 <h2 className="text-2xl font-bold mb-2">Benefits</h2>
-                <ul className="list-disc list-inside inline-block text-left">
+                <ul className="list-disc list-inside">
                   {product.benefits.map((item, i) => (
                     <li key={i}>{item}</li>
                   ))}
@@ -155,8 +155,8 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
             )}
             {/* Spacer */}
             <div className="flex-1" />
-            {/* Add to Cart button, centered and not stretched */}
-            <div className="mt-8 w-full flex justify-center">
+            {/* Add to Cart button, left aligned and not stretched */}
+            <div className="mt-8">
               <button
                 onClick={handleAddToCart}
                 className="bg-blue-500 text-white px-8 py-3 rounded font-bold text-lg hover:bg-blue-600 transition"
