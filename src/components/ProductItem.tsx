@@ -13,21 +13,29 @@ interface ProductItemProps {
   product: Product;
 }
 
+const FALLBACK_IMAGE = '/images/products/beard-balm.jpg';
+
+const getPublicImageUrl = (input?: string) => {
+  if (!input) return undefined;
+  const fileName = input.split('/').pop();
+  if (!fileName) return undefined;
+  return `/images/products/${fileName}`;
+};
+
 export default function ProductItem({ product }: ProductItemProps) {
   const { addToCart } = useStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Prefer images[0], then image, then fallback.
-  // Moved inside the component where 'product' is in scope
-  const publicImageUrl =
-    product.images && product.images.length > 0
-      ? product.images[0]
-      : product.image
-        ? product.image.startsWith('/images/')
-          ? product.image
-          : `/images/products/${product.image.split('/').pop()}`
-        : '/images/products/beard-balm.jpg'; // fallback image
+  // Always use getPublicImageUrl logic
+  let imageToShow = FALLBACK_IMAGE;
+  if (product.images && product.images.length > 0) {
+    const first = getPublicImageUrl(product.images[0]);
+    if (first) imageToShow = first;
+  } else if (product.image) {
+    const resolved = getPublicImageUrl(product.image);
+    if (resolved) imageToShow = resolved;
+  }
 
   const handleAddToCart = async () => {
     setLoading(true);
@@ -44,12 +52,11 @@ export default function ProductItem({ product }: ProductItemProps) {
 
   return (
     <div className="border p-4 rounded flex flex-col">
-      {/* Corrected Link href to use product._id */}
       <Link href={`/products/${product._id}`}>
         <div>
           <div className="relative w-full h-48 mb-4">
             <Image
-              src={publicImageUrl}
+              src={imageToShow}
               alt={product.product_name}
               fill
               className="rounded object-cover"
