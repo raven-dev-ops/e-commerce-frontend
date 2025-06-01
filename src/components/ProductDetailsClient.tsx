@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Zoom from "react-medium-image-zoom";
+import 'react-medium-image-zoom/dist/styles.css';
 import { useStore } from "@/store/useStore";
 import type { Product } from "@/types/product";
 
@@ -40,9 +42,8 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
   }
   if (imagesToShow.length === 0) imagesToShow = [FALLBACK_IMAGE];
 
-  // State for currently selected main image and hover zoom
+  // State for currently selected main image
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
 
   const handleAddToCart = () => {
     const id = typeof product._id === "number" ? product._id : Number(product._id);
@@ -82,7 +83,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
               ))}
             </div>
           )}
-          {/* Main Image with "zoom beside" on hover */}
+          {/* Main Image with Medium Zoom (click to zoom) */}
           <div
             className="relative rounded overflow-hidden bg-gray-100"
             style={{
@@ -91,38 +92,17 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
               minWidth: IMAGE_WIDTH,
               maxWidth: IMAGE_WIDTH,
             }}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
           >
-            <Image
-              src={imagesToShow[selectedIdx]}
-              alt={`${product.product_name} main image`}
-              width={IMAGE_WIDTH}
-              height={IMAGE_HEIGHT}
-              className="object-contain w-full h-full rounded"
-              priority
-            />
-            {/* Show zoom beside on hover (desktop only) */}
-            {isHovering && (
-              <div
-                className="hidden lg:block absolute top-0 left-full ml-4 z-50 border-2 border-blue-400 rounded shadow-lg bg-white"
-                style={{
-                  width: IMAGE_WIDTH,
-                  height: IMAGE_HEIGHT,
-                  pointerEvents: "none"
-                }}
-              >
-                <Image
-                  src={imagesToShow[selectedIdx]}
-                  alt="Zoomed"
-                  width={IMAGE_WIDTH * 2}
-                  height={IMAGE_HEIGHT * 2}
-                  className="object-contain w-full h-full"
-                  style={{ transform: "scale(2)" }}
-                  priority
-                />
-              </div>
-            )}
+            <Zoom>
+              <Image
+                src={imagesToShow[selectedIdx]}
+                alt={`${product.product_name} main image`}
+                width={IMAGE_WIDTH}
+                height={IMAGE_HEIGHT}
+                className="object-contain w-full h-full rounded"
+                priority
+              />
+            </Zoom>
           </div>
         </div>
         {/* RIGHT: Details */}
