@@ -7,16 +7,16 @@ const Page: React.FC = () => {
   return (
     <Layout>
       <div
-        className="flex-1 flex items-center justify-center relative w-full"
+        className="flex-1 flex items-center justify-center w-full"
         style={{
           backgroundImage: `url('/images/background-image.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          minHeight: '100%', 
         }}
       >
-        <div className="flex flex-col items-center justify-center text-white text-center w-full h-full bg-black bg-opacity-50">
-          <h1 className="text-3xl">Under Construction</h1>
-        </div>
+        <h1 className="text-3xl text-white text-center drop-shadow-lg">Under Construction</h1>
       </div>
     </Layout>
   );
