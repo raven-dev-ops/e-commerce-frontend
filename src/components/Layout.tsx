@@ -9,12 +9,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header (fixed height) */}
-      <header className="h-16 flex items-center justify-center bg-gray-900 text-white">
-        <h1 className="text-lg font-bold">Your Header</h1>
-      </header>
-
-      {/* Main content expands to fill space between header/footer */}
+      {/* Main content expands to fill space above footer */}
       <main className="flex-1 flex items-center justify-center">
         {children}
       </main>
