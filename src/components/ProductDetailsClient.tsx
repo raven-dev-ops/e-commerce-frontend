@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import ReactImageMagnify from "react-image-magnify";
 import { useStore } from "@/store/useStore";
-import type { Product } from '@/types/product';
+import type { Product } from "@/types/product";
 
 interface ProductDetailsClientProps {
   product: Product;
@@ -64,7 +65,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
                   onClick={() => setSelectedIdx(idx)}
                   className={`border rounded overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all
                     ${selectedIdx === idx ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-300"}
-                    bg-white w-[${THUMB_SIZE}px] h-[${THUMB_SIZE}px] flex items-center justify-center`}
+                    bg-white`}
                   style={{
                     width: THUMB_SIZE,
                     height: THUMB_SIZE,
@@ -81,18 +82,35 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
               ))}
             </div>
           )}
-          {/* Main Image */}
+          {/* Main Image with Magnifier */}
           <div
             className="relative rounded overflow-hidden bg-gray-100"
-            style={{ width: IMAGE_WIDTH, height: IMAGE_HEIGHT, minWidth: IMAGE_WIDTH }}
+            style={{
+              width: IMAGE_WIDTH,
+              height: IMAGE_HEIGHT,
+              minWidth: IMAGE_WIDTH,
+              maxWidth: IMAGE_WIDTH,
+            }}
           >
-            <Image
-              src={imagesToShow[selectedIdx]}
-              alt={`${product.product_name} main image`}
-              width={IMAGE_WIDTH}
-              height={IMAGE_HEIGHT}
-              className="object-contain w-full h-full"
-              priority
+            <ReactImageMagnify
+              {...{
+                smallImage: {
+                  alt: `${product.product_name} main image`,
+                  isFluidWidth: false,
+                  src: imagesToShow[selectedIdx],
+                  width: IMAGE_WIDTH,
+                  height: IMAGE_HEIGHT,
+                },
+                largeImage: {
+                  src: imagesToShow[selectedIdx],
+                  width: IMAGE_WIDTH * 2,
+                  height: IMAGE_HEIGHT * 2,
+                },
+                enlargedImageContainerStyle: { zIndex: 999 },
+                isHintEnabled: true,
+                enlargedImagePosition: "over", // Or "beside" for a side zoom
+                className: "rounded",
+              }}
             />
           </div>
         </div>
