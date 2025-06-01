@@ -1,14 +1,15 @@
 // src/components/Layout.tsx
 
 import React, { ReactNode } from 'react';
+import Header from './Header';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => (
-  <div className="flex flex-col min-h-screen">
-    {/* Main content fills all space between footer */}
+  <div className="min-h-screen flex flex-col">
+    <Header />
     <main className="flex-1 flex items-center justify-center relative overflow-hidden">
       {children}
     </main>
