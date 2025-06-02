@@ -1,9 +1,12 @@
+// app/auth/register/page.tsx
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, redirect } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import { api } from '@/lib/api';
+import GoogleAuthButton from '@/components/GoogleAuthButton';
 
 function isAxiosError(error: unknown): error is { response?: { data?: { detail?: string } } } {
   return typeof error === 'object' && error !== null && 'response' in error;
@@ -69,6 +72,8 @@ export default function Register() {
   return (
     <div className="max-w-sm mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Register</h1>
+      <GoogleAuthButton text="Register with Google" />
+      <div className="text-center text-gray-500 my-2">or</div>
       <form onSubmit={handleSubmit}>
         <label className="block mb-2">
           Email
@@ -112,6 +117,10 @@ export default function Register() {
           {loading ? 'Registering...' : 'Register'}
         </button>
       </form>
+      <div className="mt-4 text-center text-gray-600">
+        Already have an account?{' '}
+        <a href="/auth/login" className="text-blue-700 underline">Login</a>
+      </div>
     </div>
   );
 }
