@@ -1,15 +1,12 @@
-// src/components/GoogleAuthButton.tsx
-
-import React from 'react';
+// GoogleAuthButton.tsx
 
 export default function GoogleAuthButton({ text = "Continue with Google" }: { text?: string }) {
-  // Change this to your backend's Google auth endpoint
   const GOOGLE_AUTH_URL = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL || '/api/auth/google/login';
 
   return (
     <a
       href={GOOGLE_AUTH_URL}
-      className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 rounded bg-white hover:bg-gray-50 transition text-gray-800 font-medium mb-4"
+      className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 rounded bg-white hover:bg-gray-50 transition text-gray-800 font-medium mt-4"
       style={{ textDecoration: 'none' }}
     >
       <svg width={22} height={22} viewBox="0 0 22 22">
