@@ -130,8 +130,8 @@ const Header: React.FC = () => {
               <Image
                 src="/images/logos/Twiin_Logo_v3.png"
                 alt="Home"
-                width={110}
-                height={110}
+                width={310}
+                height={310}
                 className="transition-transform duration-200 hover:scale-110"
                 priority
               />
