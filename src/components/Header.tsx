@@ -107,43 +107,46 @@ const Header: React.FC = () => {
           borderBottom: '1.5px solid var(--dark-grey)',
         }}
       >
-        <nav className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center" aria-label="Home">
-              <Image
-                src="/images/logos/Twiin_Logo_v3.png"
-                alt="Home"
-                width={120}
-                height={120}
-                className="transition-transform duration-200 hover:scale-110"
-                priority
-              />
-            </Link>
-          </div>
-          <div className="flex items-center space-x-6">
-            <Link href="/products" aria-label="Products">
-              <ShoppingBag
-                className="w-8 h-8 hover:scale-110 transition-transform"
-                style={{ color: 'var(--foreground)' }}
-              />
-            </Link>
+        <nav className="container mx-auto flex justify-center">
+          <div className="flex items-center justify-center gap-8 w-full max-w-4xl mx-auto">
+            {/* Profile */}
+            <button
+              onClick={handleUserClick}
+              className="flex items-center p-2 rounded hover:bg-gray-200 focus:outline-none"
+              aria-label="Profile"
+              style={{ color: 'var(--foreground)' }}
+            >
+              <User className="w-8 h-8" />
+            </button>
+            {/* Merch */}
             <Link href="/merch" aria-label="Merch">
               <Shirt
                 className="w-8 h-8 hover:scale-110 transition-transform"
                 style={{ color: 'var(--foreground)' }}
               />
             </Link>
-            <button
-              onClick={handleUserClick}
-              className="relative flex items-center p-3 rounded hover:bg-gray-200 focus:outline-none"
-              aria-label="User"
-              style={{ color: 'var(--foreground)' }}
-            >
-              <User className="w-8 h-8" />
-            </button>
+            {/* Logo */}
+            <Link href="/" aria-label="Home" className="flex items-center">
+              <Image
+                src="/images/logos/Twiin_Logo_v3.png"
+                alt="Home"
+                width={110}
+                height={110}
+                className="transition-transform duration-200 hover:scale-110"
+                priority
+              />
+            </Link>
+            {/* Products */}
+            <Link href="/products" aria-label="Products">
+              <ShoppingBag
+                className="w-8 h-8 hover:scale-110 transition-transform"
+                style={{ color: 'var(--foreground)' }}
+              />
+            </Link>
+            {/* Cart */}
             <button
               onClick={handleCartClick}
-              className="relative flex items-center p-3 rounded hover:bg-gray-200 focus:outline-none"
+              className="relative flex items-center p-2 rounded hover:bg-gray-200 focus:outline-none"
               aria-label="Cart"
               style={{ color: 'var(--foreground)' }}
             >
