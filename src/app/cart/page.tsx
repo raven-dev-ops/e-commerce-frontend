@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useStore } from "@/store/useStore";
 import axios from "axios";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 type ProductDetail = {
@@ -36,13 +36,14 @@ export default function CartPage() {
   >({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   // Authentication check effect
   useEffect(() => {
-    // Check for authentication on component mount
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      redirect("/auth/login");
+      router.push("/auth/login");
+      return;
     }
 
     const fetchAllDetails = async () => {
@@ -72,6 +73,7 @@ export default function CartPage() {
       setProductDetails({});
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart]);
 
   const total = useMemo(() => {
