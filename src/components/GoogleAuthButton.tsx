@@ -19,7 +19,29 @@ export default function GoogleAuthButton({
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       if (tokenResponse && tokenResponse.access_token) {
-        onSuccess && onSuccess(tokenResponse.access_token);
+        fetch(
+          'https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: tokenResponse.access_token }),
+            credentials: 'include',
+          }
+        )
+          .then(async (res) => {
+            if (!res.ok) {
+              const err = await res.json();
+              onError && onError(`Backend error: ${JSON.stringify(err)}`);
+            } else {
+              const data = await res.json();
+              console.log('✅ Logged in successfully!', data);
+              onSuccess && onSuccess(data.key); // or pass full user info if needed
+            }
+          })
+          .catch((e) => {
+            console.error('❌ Network error:', e);
+            onError && onError(`Network error: ${e.message}`);
+          });
       } else {
         onError && onError('No access token received');
       }
@@ -27,7 +49,7 @@ export default function GoogleAuthButton({
     onError: () => {
       onError && onError('Google login failed');
     },
-    flow: 'implicit', // or 'auth-code' if your backend is set for that flow
+    flow: 'implicit', // or 'auth-code' if your backend expects it
   });
 
   return (
