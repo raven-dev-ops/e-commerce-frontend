@@ -18,7 +18,7 @@ export default function GoogleAuthButton({
     onSuccess: (tokenResponse) => {
       if (tokenResponse?.access_token) {
         fetch(
-          'https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/login/',
+          'https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
