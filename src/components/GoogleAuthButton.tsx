@@ -1,3 +1,5 @@
+// GoogleAuthButton.tsx
+
 import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 
@@ -17,27 +19,26 @@ export default function GoogleAuthButton({
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       if (tokenResponse?.access_token) {
-        fetch(
-          'https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ access_token: tokenResponse.access_token }),
-            credentials: 'include',
-          }
-        )
+        fetch('https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token: tokenResponse.access_token }),
+          credentials: 'include',
+        })
           .then(async (res) => {
-            const data = await res.json();
-            if (!res.ok) {
-              console.error('❌ Backend error:', data);
-              onError?.(`Backend error: ${JSON.stringify(data)}`);
-            } else {
-              console.log('✅ Logged in successfully!', data);
-              const token = data.key || data.access || data.token || '';
-              if (token) {
-                document.cookie = `auth_token=${token}; path=/; secure; samesite=Lax`;
+            const text = await res.text();
+            try {
+              const data = JSON.parse(text);
+              if (!res.ok) {
+                console.error('❌ Backend error:', data);
+                onError?.(`Backend error: ${JSON.stringify(data)}`);
+              } else {
+                console.log('✅ Logged in successfully!', data);
+                onSuccess?.(data.key || data.access || data.token || '');
               }
-              onSuccess?.(token);
+            } catch (e) {
+              console.error('❌ Invalid JSON from backend:', text);
+              onError?.(`Unexpected non-JSON response: ${text}`);
             }
           })
           .catch((e) => {
@@ -51,7 +52,7 @@ export default function GoogleAuthButton({
     onError: () => {
       onError?.('Google login failed');
     },
-    flow: 'implicit', // Change to 'auth-code' if backend is configured for code flow
+    flow: 'implicit', // or 'auth-code' if backend expects it
   });
 
   return (
@@ -59,7 +60,7 @@ export default function GoogleAuthButton({
       type="button"
       onClick={() => login()}
       className={`w-full flex justify-center items-center py-2 px-4 bg-white border border-gray-300 rounded shadow text-gray-700 font-medium hover:bg-gray-50 transition ${className}`}
-      style={{ textDecoration: "none" }}
+      style={{ textDecoration: 'none' }}
     >
       <svg className="w-6 h-6 mr-2" viewBox="0 0 48 48">
         <g>
