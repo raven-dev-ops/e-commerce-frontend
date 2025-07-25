@@ -37,14 +37,15 @@ export default function ProductItem({ product }: ProductItemProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const productId = typeof product._id === 'string' ? product._id : String(product._id);
   const imageToShow = getDisplayImage(product);
 
   const handleAddToCart = async () => {
     setLoading(true);
     setError(null);
     try {
-      await addItemToCart({ product_id: product._id, quantity: 1 });
-      addToCart(product._id, 1);
+      await addItemToCart({ product_id: productId, quantity: 1 });
+      addToCart(productId, 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
     } finally {
@@ -54,7 +55,7 @@ export default function ProductItem({ product }: ProductItemProps) {
 
   return (
     <div className="border p-4 rounded flex flex-col">
-      <Link href={`/products/${product._id}`}>
+      <Link href={`/products/${productId}`}>
         <div>
           <div className="relative w-full h-48 mb-4">
             <Image
@@ -64,7 +65,6 @@ export default function ProductItem({ product }: ProductItemProps) {
               className="rounded object-cover"
               sizes="(max-width: 768px) 100vw, 33vw"
               priority
-              unoptimized // Remove this line for Next.js image optimization
             />
           </div>
           <h2 className="text-xl font-semibold">{product.product_name}</h2>
@@ -73,9 +73,11 @@ export default function ProductItem({ product }: ProductItemProps) {
         </div>
       </Link>
       <button
+        type="button"
         onClick={handleAddToCart}
         className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 self-start"
         disabled={loading}
+        aria-disabled={loading}
       >
         {loading ? 'Adding…' : 'Add to Cart'}
       </button>

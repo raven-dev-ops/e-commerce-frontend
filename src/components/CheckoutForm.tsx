@@ -1,29 +1,33 @@
-// components/CheckoutForm.tsx
-
 'use client';
 
 import { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { useStore, StoreState } from '@/store/useStore'; // Import StoreState
+import { useStore, StoreState } from '@/store/useStore';
 import { api } from '@/lib/api';
 
 export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  // Typed selector to fix the TS error
   const clearCart = useStore((state: StoreState) => state.clearCart);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      setErrorMsg('Stripe has not loaded yet.');
+      return;
+    }
 
     setLoading(true);
+    setErrorMsg(null);
+
     const card = elements.getElement(CardElement);
     if (!card) {
+      setErrorMsg('Card details not found.');
       setLoading(false);
       return;
     }
@@ -45,7 +49,10 @@ export default function CheckoutForm() {
       });
 
       clearCart();
-      window.location.href = '/';
+      setSuccessMsg('Payment successful! Redirecting...');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     } catch {
       setErrorMsg('Payment failed, please try again.');
       setLoading(false);
@@ -54,14 +61,15 @@ export default function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-4">
-        <CardElement className="p-2 border rounded" />
+      <div className="mb-4 border rounded p-2">
+        <CardElement />
       </div>
       {errorMsg && <div className="text-red-600 mb-4">{errorMsg}</div>}
+      {successMsg && <div className="text-green-600 mb-4">{successMsg}</div>}
       <button
         type="submit"
         disabled={!stripe || loading}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded"
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
       >
         {loading ? 'Processing…' : 'Pay Now'}
       </button>

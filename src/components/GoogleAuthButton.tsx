@@ -1,5 +1,3 @@
-// GoogleAuthButton.tsx
-
 import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 
@@ -27,7 +25,7 @@ export default function GoogleAuthButton({
         })
           .then(async (res) => {
             const contentType = res.headers.get('Content-Type');
-            const isJSON = contentType && contentType.includes('application/json');
+            const isJSON = contentType?.includes('application/json') ?? false;
             const rawText = await res.text();
 
             if (!isJSON) {
@@ -42,7 +40,7 @@ export default function GoogleAuthButton({
                 console.error('❌ Backend error:', data);
                 onError?.(`Backend error: ${JSON.stringify(data)}`);
               } else {
-                const token = data.key || data.access || data.token || '';
+                const token = data.key ?? data.access ?? data.token ?? '';
                 if (token) {
                   console.log('✅ Logged in successfully!', token);
                   onSuccess?.(token);
@@ -60,7 +58,7 @@ export default function GoogleAuthButton({
             onError?.(`Network error: ${e.message}`);
           });
       } else {
-        onError?.('No code received from Google');
+        onError?.('No authorization code received from Google');
       }
     },
     onError: () => {
@@ -74,8 +72,9 @@ export default function GoogleAuthButton({
       type="button"
       onClick={() => login()}
       className={`w-full flex justify-center items-center py-2 px-4 bg-white border border-gray-300 rounded shadow text-gray-700 font-medium hover:bg-gray-50 transition ${className}`}
+      aria-label={text}
     >
-      <svg className="w-6 h-6 mr-2" viewBox="0 0 48 48">
+      <svg className="w-6 h-6 mr-2" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
         <g>
           <path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.7 33.5 29.8 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8 2.9l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20.1-8 20.1-20 0-1.3-.1-2.3-.3-3z" />
           <path fill="#34A853" d="M6.3 14.6l7 5.1C15.2 16.2 19.2 13 24 13c3.1 0 5.9 1.1 8 2.9l6-6C34.6 5.1 29.6 3 24 3 16.3 3 9.3 7.7 6.3 14.6z" />

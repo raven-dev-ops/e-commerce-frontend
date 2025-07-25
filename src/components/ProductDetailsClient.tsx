@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Zoom from "react-medium-image-zoom";
-import 'react-medium-image-zoom/dist/styles.css';
+import "react-medium-image-zoom/dist/styles.css";
 import { useStore } from "@/store/useStore";
 import type { Product } from "@/types/product";
 
@@ -26,6 +26,7 @@ const THUMB_SIZE = 80;
 
 const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) => {
   const { addToCart } = useStore();
+  const productId = typeof product._id === "string" ? product._id : String(product._id);
 
   const price = Number(product.price);
   const formattedPrice = !isNaN(price) ? price.toFixed(2) : "0.00";
@@ -46,7 +47,12 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   const handleAddToCart = () => {
-    addToCart(product._id, 1); // <-- product._id is always string now
+    try {
+      addToCart(productId, 1);
+    } catch (err) {
+      console.error("Failed to add to cart:", err);
+      // optionally show a UI error message here
+    }
   };
 
   return (
@@ -60,6 +66,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
                 key={idx}
                 type="button"
                 aria-label={`Show image ${idx + 1}`}
+                aria-pressed={selectedIdx === idx}
                 onClick={() => setSelectedIdx(idx)}
                 className={`border rounded overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all
                   ${selectedIdx === idx ? "ring-2 ring-blue-500 border-blue-500" : "border-gray-300"}
@@ -138,6 +145,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({ product }) 
             {/* Add to Cart button, left aligned and not stretched */}
             <div className="mt-8">
               <button
+                type="button"
                 onClick={handleAddToCart}
                 className="bg-blue-500 text-white px-8 py-3 rounded font-bold text-lg hover:bg-blue-600 transition"
               >

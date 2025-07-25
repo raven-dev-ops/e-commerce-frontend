@@ -3,12 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
-import { api } from '@/lib/api';
-import GoogleAuthButton from '@/components/GoogleAuthButton';
-
-function isAxiosError(error: unknown): error is { response?: { data?: { detail?: string } } } {
-  return typeof error === 'object' && error !== null && 'response' in error;
-}
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.BACKEND_URL || '';
 
@@ -19,19 +13,17 @@ export default function Register() {
     password2: '',
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login, isAuthenticated } = useStore();
+  const { isAuthenticated } = useStore();
 
   useEffect(() => {
     if (isAuthenticated) {
       router.push('/');
-    } else {
-      setLoading(false);
     }
   }, [isAuthenticated, router]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -47,65 +39,29 @@ export default function Register() {
     }
 
     try {
-      await api.post(`${BASE_URL}/authentication/register/`, {
-        email: form.email,
-        password: form.password1,
-      });
-      router.push('/auth/login');
-    } catch (err: unknown) {
-      if (isAxiosError(err) && err.response?.data?.detail) {
-        setErrorMsg(err.response.data.detail);
-      } else if (err instanceof Error) {
-        setErrorMsg(`Registration failed: ${err.message}`);
-      } else {
-        setErrorMsg('An unexpected error occurred during registration.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSuccess = async (credential: string) => {
-    setLoading(true);
-    setErrorMsg(null);
-    try {
-      const response = await fetch(`${BASE_URL}/users/auth/google/`, {
+      const res = await fetch(`${BASE_URL}/authentication/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access_token: credential }),
+        body: JSON.stringify({ email: form.email, password: form.password1 }),
       });
 
-      if (!response.ok) throw new Error('Google login failed');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || 'Registration failed');
+      }
 
-      const data = await response.json();
-      localStorage.setItem('accessToken', data.access ?? '');
-      localStorage.setItem('refreshToken', data.refresh ?? '');
-      login(data.user || {});
-      router.push('/');
+      // Registration success, redirect to login
+      router.push('/auth/login');
     } catch (error: any) {
-      setErrorMsg('Google login failed');
+      setErrorMsg(error.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
-
-  const handleGoogleError = (error: string) => {
-    setErrorMsg(error || 'Google login failed');
-  };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <div className="max-w-sm mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Register</h1>
-      <GoogleAuthButton
-        text="Register with Google"
-        onSuccess={handleGoogleSuccess}
-        onError={handleGoogleError}
-      />
-      <div className="text-center text-gray-500 my-2">or</div>
       <form onSubmit={handleSubmit}>
         <label className="block mb-2">
           Email
@@ -116,6 +72,7 @@ export default function Register() {
             className="w-full border p-2 rounded"
             value={form.email}
             onChange={handleChange}
+            autoComplete="email"
           />
         </label>
         <label className="block mb-2">
@@ -127,6 +84,7 @@ export default function Register() {
             className="w-full border p-2 rounded"
             value={form.password1}
             onChange={handleChange}
+            autoComplete="new-password"
           />
         </label>
         <label className="block mb-2">
@@ -138,6 +96,7 @@ export default function Register() {
             className="w-full border p-2 rounded"
             value={form.password2}
             onChange={handleChange}
+            autoComplete="new-password"
           />
         </label>
         {errorMsg && <div className="text-red-600 mb-2">{errorMsg}</div>}
