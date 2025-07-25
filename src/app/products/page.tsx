@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from "next/image";
+// If you control the type, do this:
+// type Product = { ...; images: string[]; ... };
 import type { Product } from '@/types/product';
 
 import Slider from 'react-slick';
@@ -34,7 +36,30 @@ interface ApiResponseProduct {
 
 const FALLBACK_IMAGE = "/images/products/missing-image.png";
 
-// Normalize ID/images for all products, all categories
+// Always returns at least one valid image path for every product
+function normalizeImages(product: ApiResponseProduct): string[] {
+  let images: string[] = [];
+
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    images = product.images.filter(Boolean);
+  } else if (typeof product.image === 'string' && product.image.length > 0) {
+    images = [product.image];
+  }
+
+  if (!images.length) {
+    images = [FALLBACK_IMAGE];
+  }
+
+  // Optionally always resolve to your local folder (remove if storing full URLs)
+  images = images.map(img => {
+    const fileName = img?.split('/').pop();
+    if (!fileName || fileName === FALLBACK_IMAGE.split('/').pop()) return FALLBACK_IMAGE;
+    return `/images/products/${fileName}`;
+  });
+
+  return images;
+}
+
 async function getProducts(): Promise<Product[]> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '');
   const url = `${baseUrl}/products/`;
@@ -54,18 +79,13 @@ async function getProducts(): Promise<Product[]> {
       rawId = (product._id as { $oid: string }).$oid;
     }
 
-    let images: string[] = [];
-    if (Array.isArray(product.images) && product.images.length > 0) {
-      images = product.images;
-    } else if (typeof product.image === 'string' && product.image.length > 0) {
-      images = [product.image];
-    }
+    const images = normalizeImages(product);
 
     return {
       ...product,
       _id: rawId,
       price: Number(product.price),
-      images,
+      images, // always string[]
     };
   });
 
@@ -79,7 +99,7 @@ async function getProducts(): Promise<Product[]> {
   });
 }
 
-// Show arrows, but never dots
+// Carousel settings: arrows always, dots never
 const getCarouselSettings = (itemCount: number) => ({
   dots: false,
   arrows: true,
@@ -122,11 +142,9 @@ const getCarouselSettings = (itemCount: number) => ({
 });
 
 function ProductCard({ p }: { p: Product }) {
-  const productImages = Array.isArray(p.images) && p.images.length > 0
-    ? p.images.map(img => {
-        const fileName = img?.split("/").pop();
-        return fileName ? `/images/products/${fileName}` : FALLBACK_IMAGE;
-      })
+  // This guarantees productImages is always string[] (never undefined or empty)
+  const productImages: string[] = Array.isArray(p.images) && p.images.length > 0
+    ? p.images
     : [FALLBACK_IMAGE];
 
   const [hoveredIdx, setHoveredIdx] = useState(0);
