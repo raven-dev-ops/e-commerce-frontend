@@ -1,5 +1,3 @@
-// components/RootLayout.tsx
-
 import React from 'react';
 import { Metadata } from '../types/metadata';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -28,6 +26,8 @@ const RootLayout: React.FC<RootLayoutProps> = ({ metadata, children }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
+        <meta name="robots" content="index, follow" />
+        <link rel="icon" href="/favicon.ico" />
         <meta property="og:title" content={metadata.title} />
         <meta property="og:description" content={metadata.description} />
         <meta property="og:image" content={metadata.image} />

@@ -1,29 +1,45 @@
-/// app/cart/CartClient.tsx
-
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function CartClient() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState<string | null>(null); // Optional: if you want to display user's name
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    // Check for the token in localStorage on the client side
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken')
     if (token) {
-      setIsLoggedIn(true);
-      setUserName('User'); // Replace with actual user name if you fetch it
+      setIsLoggedIn(true)
+      // Optionally, fetch user name from API or global store here
+      setUserName('User') 
     } else {
-      setIsLoggedIn(false);
-      setUserName(null);
+      setIsLoggedIn(false)
+      setUserName(null)
     }
-  }, []); // Run this effect only once on component mount
+  }, [])
+
+  const redirectToLogin = () => {
+    router.push('/auth/login')
+  }
 
   return (
     <div>
       <h1>Your Cart</h1>
-      {isLoggedIn ? (<p>Welcome, {userName || 'User'}!</p>) : (<p>Please log in to view your cart.</p>)}
+      {isLoggedIn ? (
+        <p>Welcome, {userName || 'User'}!</p>
+      ) : (
+        <>
+          <p>Please log in to view your cart.</p>
+          <button
+            onClick={redirectToLogin}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Go to Login
+          </button>
+        </>
+      )}
     </div>
   )
 }
