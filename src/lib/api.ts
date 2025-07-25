@@ -1,4 +1,3 @@
-// frontend/src/lib/api.ts
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 const api: AxiosInstance = axios.create({
@@ -13,7 +12,7 @@ api.interceptors.request.use(
     config.headers = config.headers ?? {};
 
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('accessToken'); // Or retrieve from your Zustand store
+      const token = localStorage.getItem('accessToken'); // Or get from Zustand store
       if (token) {
         (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
       }

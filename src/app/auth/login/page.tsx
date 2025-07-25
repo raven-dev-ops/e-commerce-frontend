@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginWithEmailPassword } from '@/lib/auth';
 import { useStore } from '@/store/useStore';
 import GoogleAuthButton from '@/components/GoogleAuthButton';
+import axios from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.BACKEND_URL || '';
 
@@ -27,9 +27,17 @@ export default function Login() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const { token, user } = await loginWithEmailPassword(email, password);
-      localStorage.setItem('accessToken', token);
-      login(user);
+      const response = await axios.post(`${BASE_URL}/authentication/login/`, {
+        email,
+        password,
+      });
+
+      const data = response.data;
+      localStorage.setItem('accessToken', data.access);  // Adjust key if different from backend
+      localStorage.setItem('refreshToken', data.refresh); // If you use refresh tokens
+
+      login(data.user); // Your user object from backend
+
       router.push('/');
     } catch (error: any) {
       if (error.response) {
@@ -56,7 +64,6 @@ export default function Login() {
 
       const data = await response.json();
 
-      // Store JWTs
       localStorage.setItem('accessToken', data.access ?? '');
       localStorage.setItem('refreshToken', data.refresh ?? '');
 

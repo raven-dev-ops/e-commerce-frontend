@@ -6,20 +6,22 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value;
 
-  // If the user is not authenticated and is trying to access the /cart route,
-  // redirect them to the login page.
+  // Redirect unauthenticated users trying to access /cart to login page
   if (!accessToken && request.nextUrl.pathname === '/cart') {
     const loginUrl = new URL('/auth/login', request.url);
-    // You might want to add a 'next' query parameter to redirect back to the cart after login
+    // Optional: uncomment to redirect back after login
     // loginUrl.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Continue to the next middleware or the requested page
+  // Proceed to requested page or next middleware
   return NextResponse.next();
 }
 
 export const config = {
-  // Match all routes except API routes, static files, images, favicons, and auth pages
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|auth/login|auth/register).*)', '/cart'],
+  matcher: [
+    // Protect all routes except API, Next.js internals, static files, and auth pages
+    '/((?!api|_next/static|_next/image|favicon.ico|auth/login|auth/register).*)',
+    '/cart', // Explicitly include /cart if needed (though covered above)
+  ],
 };
