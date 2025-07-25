@@ -47,7 +47,7 @@ export default function Register() {
     }
 
     try {
-      await api.post('/auth/register/', {
+      await api.post(`${BASE_URL}/authentication/register/`, {
         email: form.email,
         password: form.password1,
       });
@@ -78,7 +78,6 @@ export default function Register() {
       if (!response.ok) throw new Error('Google login failed');
 
       const data = await response.json();
-      // Store JWTs
       localStorage.setItem('accessToken', data.access ?? '');
       localStorage.setItem('refreshToken', data.refresh ?? '');
       login(data.user || {});

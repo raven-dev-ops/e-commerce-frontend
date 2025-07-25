@@ -1,5 +1,3 @@
-// frontend/src/store/useStore.ts
-
 import { create, StateCreator } from 'zustand';
 
 // Type for a cart item
