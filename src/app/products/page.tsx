@@ -7,9 +7,9 @@ import "slick-carousel/slick/slick-theme.css";
 import type { Product } from '@/types/product';
 import ProductItem from '@/components/ProductItem';
 
+// Now _id is always a string, so we simplify types:
 interface ApiResponseProduct {
-  id?: string;
-  _id?: string | { $oid: string } | null | undefined;
+  _id: string;
   product_name: string;
   price: string | number;
   description?: string;
@@ -41,26 +41,14 @@ async function getProducts(): Promise<Product[]> {
 
   const data = await res.json();
 
-  const products = data.results.map((product: ApiResponseProduct): Product => {
-    let id = '';
-    if (typeof product.id === 'string' && product.id) {
-      id = product.id;
-    } else if (typeof product._id === 'string' && product._id) {
-      id = product._id;
-    } else if (
-      typeof product._id === 'object' &&
-      product._id &&
-      '$oid' in product._id
-    ) {
-      id = (product._id as { $oid: string }).$oid;
-    }
-    return {
-      ...product,
-      _id: id,
-      price: Number(product.price),
-    };
-  });
+  // We expect _id to be a string already
+  const products = data.results.map((product: ApiResponseProduct): Product => ({
+    ...product,
+    _id: String(product._id),
+    price: Number(product.price),
+  }));
 
+  // Filter only valid _id values
   return products.filter(
     (product: Product) =>
       typeof product._id === 'string' &&
@@ -70,7 +58,7 @@ async function getProducts(): Promise<Product[]> {
   );
 }
 
-// Show arrows, but never dots
+// Carousel settings: Show arrows, never dots
 const getCarouselSettings = (itemCount: number) => ({
   dots: false,
   arrows: true,
@@ -113,7 +101,6 @@ const getCarouselSettings = (itemCount: number) => ({
 });
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
@@ -123,9 +110,8 @@ export default function ProductsPage() {
     (async () => {
       try {
         const fetchedProducts = await getProducts();
-        setProducts(fetchedProducts);
 
-        // Dynamic categories
+        // Dynamic categories from available products
         const uniqueCategories = Array.from(
           new Set(
             fetchedProducts
@@ -136,7 +122,7 @@ export default function ProductsPage() {
 
         setCategories(uniqueCategories);
 
-        // Group by category
+        // Group products by category
         const grouped: { [key: string]: Product[] } = {};
         uniqueCategories.forEach(category => {
           grouped[category] = [];
