@@ -18,14 +18,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }, [hydrateCart]);
 
   return (
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex flex-grow items-center justify-center">
-            {children}
-          </main>
-          {/* <Footer /> */}
-        </div>
-      </GoogleOAuthProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex flex-grow flex-col">
+          {children}
+        </main>
+        <Footer />
+      </div>
+    </GoogleOAuthProvider>
   );
 }
