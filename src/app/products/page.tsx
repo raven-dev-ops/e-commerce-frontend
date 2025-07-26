@@ -1,9 +1,6 @@
-// app/products/page.tsx  (this is a SERVER component – no 'use client')
-import ProductsClient from "./ProductsClient";
+// src/app/products/page.tsx
 
-export const metadata = {
-  title: "Products – TwiinZ Beard Balms",
-};
+import ProductsClient from './ProductsClient';
 
 export default function ProductsPage() {
   return <ProductsClient />;
