@@ -5,31 +5,35 @@ import { useEffect, useState, useRef } from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Link from 'next/link';
+import Image from 'next/image';
 import type { Product } from '@/types/product';
-import ProductItem from '@/components/ProductItem';
 
 interface ApiResponseProduct {
   _id: string;
   product_name: string;
   price: string | number;
   description?: string;
-  image?: string;
   images?: string[];
-  ingredients?: string[];
-  benefits?: string[];
+  image?: string;
   category?: string;
-  // ...other fields if needed
+  // …other fields if you have them
+}
+
+const CATEGORY_ORDER = ['Washes', 'Oils', 'Balms', 'Wax'];
+
+function getPublicImageUrl(path?: string) {
+  if (!path) return '/images/products/missing-image.png';
+  const fname = path.split('/').pop();
+  return fname ? `/images/products/${fname}` : '/images/products/missing-image.png';
 }
 
 async function getAllProducts(): Promise<Product[]> {
-  // Build base URL, strip trailing slash, force HTTPS
-  let rawBase = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-  if (rawBase.startsWith('http://')) {
-    rawBase = rawBase.replace(/^http:\/\//, 'https://');
-  }
-  const base = rawBase;
-
-  // Paginate through /products/?page=…
+  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
+  // force https
+  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
+  const base = raw;
+  // start on page=1
   let url = `${base}/products/?page=1`;
   const all: ApiResponseProduct[] = [];
 
@@ -38,13 +42,11 @@ async function getAllProducts(): Promise<Product[]> {
     if (!res.ok) throw new Error(`Failed to fetch ${url}`);
     const json = await res.json();
     all.push(...(json.results as ApiResponseProduct[]));
-
     if (json.next) {
-      // Force HTTPS on next link
-      const nextUrl = json.next.replace(/^http:\/\//, 'https://');
-      // Extract only the query string (?page=…)
-      const parsed = new URL(nextUrl);
-      url = `${base}/products/${parsed.search}`;
+      // ensure HTTPS in next link
+      const next = (json.next as string).replace(/^http:\/\//, 'https://');
+      const u = new URL(next);
+      url = `${base}/products/${u.search}`;
     } else {
       url = '';
     }
@@ -52,31 +54,36 @@ async function getAllProducts(): Promise<Product[]> {
 
   return all
     .map(p => ({
-      ...p,
       _id: String(p._id),
+      product_name: p.product_name,
       price: Number(p.price),
+      description: p.description,
+      images: p.images,
+      image: p.image,
+      category: p.category,
     }))
     .filter(p => p._id && p._id !== 'undefined' && p._id !== 'null');
 }
 
-const getCarouselSettings = (count: number) => ({
-  dots: false,
-  arrows: true,
-  infinite: count > 1,
-  speed: 500,
-  slidesToShow: Math.min(4, count),
-  slidesToScroll: 1,
-  responsive: [
-    { breakpoint: 1024, settings: { slidesToShow: Math.min(3, count), arrows: true } },
-    { breakpoint: 600,  settings: { slidesToShow: Math.min(2, count), arrows: true } },
-    { breakpoint: 480,  settings: { slidesToShow: 1, arrows: true } },
-  ],
-});
+function getCarouselSettings(count: number) {
+  return {
+    dots: false,
+    arrows: true,
+    infinite: count > 1,
+    speed: 500,
+    slidesToShow: Math.min(4, count),
+    slidesToScroll: 1,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: Math.min(3, count), arrows: true } },
+      { breakpoint: 600,  settings: { slidesToShow: Math.min(2, count), arrows: true } },
+      { breakpoint: 480,  settings: { slidesToShow: 1, arrows: true } },
+    ],
+  };
+}
 
 export default function ProductsPage() {
   const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [error, setError]           = useState<string|null>(null);
   const [byCategory, setByCategory] = useState<Record<string, Product[]>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -84,23 +91,16 @@ export default function ProductsPage() {
     (async () => {
       try {
         const all = await getAllProducts();
-
-        // Unique categories
-        const cats = Array.from(new Set(
-          all.map(p => p.category).filter((c): c is string => !!c)
-        ));
-        setCategories(cats);
-
-        // Group by category
         const grouped: Record<string, Product[]> = {};
-        cats.forEach(cat => (grouped[cat] = []));
+        // initialize only our four
+        CATEGORY_ORDER.forEach(cat => grouped[cat] = []);
+        // distribute
         all.forEach(p => {
           if (p.category && grouped[p.category]) {
             grouped[p.category].push(p);
           }
         });
         setByCategory(grouped);
-
       } catch (err: any) {
         console.error(err);
         setError(err.message || 'Failed to load products');
@@ -110,7 +110,7 @@ export default function ProductsPage() {
     })();
   }, []);
 
-  // Accessibility: disable focus/interaction in hidden slides
+  // a11y: disable focus in hidden slides
   useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current
@@ -129,31 +129,59 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto p-4" ref={containerRef}>
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
+      <h1 className="text-2xl font-bold mb-6">Products</h1>
 
       {loading && <p>Loading products…</p>}
       {error   && <p className="text-red-500">Error: {error}</p>}
 
-      {!loading && !error && (
-        categories.length === 0
-          ? <p>No categories available.</p>
-          : categories.map(cat => {
-              const items = byCategory[cat] || [];
-              if (items.length === 0) return null;
-              return (
-                <section key={cat} className="mb-8">
-                  <h2 className="text-xl font-bold mb-3 capitalize">{cat}</h2>
-                  <Slider {...getCarouselSettings(items.length)}>
-                    {items.map(p => (
-                      <div key={p._id} className="px-2">
-                        <ProductItem product={p} />
-                      </div>
-                    ))}
-                  </Slider>
-                </section>
-              );
-            })
-      )}
+      {!loading && !error && CATEGORY_ORDER.map(cat => {
+        const items = byCategory[cat] || [];
+        if (items.length === 0) return null;
+        return (
+          <section key={cat} className="mb-12">
+            <h2 className="text-xl font-semibold mb-4">{cat}</h2>
+            <Slider {...getCarouselSettings(items.length)}>
+              {items.map(p => {
+                // pick first image or fallback
+                const img =
+                  Array.isArray(p.images) && p.images[0]
+                    ? getPublicImageUrl(p.images[0])
+                    : getPublicImageUrl(p.image);
+                return (
+                  <div key={p._id} className="px-2">
+                    <div className="border rounded overflow-hidden">
+                      <Link href={`/products/${p._id}`}>
+                        <a className="block">
+                          <div className="relative w-full h-48 bg-gray-100">
+                            <Image
+                              src={img}
+                              alt={p.product_name}
+                              fill
+                              className="object-cover"
+                              priority
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h3 className="font-medium text-lg mb-1">
+                              {p.product_name}
+                            </h3>
+                            {p.description && (
+                              <p className="text-sm text-gray-600 line-clamp-2">
+                                {p.description}
+                              </p>
+                            )}
+                            <p className="mt-2 font-bold">${p.price.toFixed(2)}</p>
+                          </div>
+                        </a>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </Slider>
+          </section>
+        );
+      })}
     </div>
   );
 }
