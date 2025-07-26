@@ -89,6 +89,14 @@ export default function ProductDetailsClient({
     ));
   };
 
+  // Utility for comma-separated lists
+  const formatArray = (val?: string[] | string) =>
+    Array.isArray(val)
+      ? val.join(', ')
+      : typeof val === 'string'
+      ? val.split(/[,|;]/).map(v => v.trim()).filter(Boolean).join(', ')
+      : '';
+
   return (
     <div className="container mx-auto p-4">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
@@ -165,18 +173,21 @@ export default function ProductDetailsClient({
           </div>
 
           {product.description && (
-            <p className="mb-2 text-gray-700">{product.description}</p>
+            <p className="mb-2 text-gray-700">
+              <span className="font-semibold">Description: </span>
+              {product.description}
+            </p>
           )}
-          {product.ingredients && (
+          {product.ingredients && formatArray(product.ingredients) && (
             <div className="mb-2">
               <span className="font-semibold">Ingredients: </span>
-              <span className="text-gray-700">{product.ingredients}</span>
+              <span className="text-gray-700">{formatArray(product.ingredients)}</span>
             </div>
           )}
-          {product.benefits && (
+          {product.benefits && formatArray(product.benefits) && (
             <div className="mb-2">
               <span className="font-semibold">Benefits: </span>
-              <span className="text-gray-700">{product.benefits}</span>
+              <span className="text-gray-700">{formatArray(product.benefits)}</span>
             </div>
           )}
           {product.scent_profile && (
@@ -187,13 +198,16 @@ export default function ProductDetailsClient({
           )}
           <div className="flex-1" />
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="mt-8 bg-blue-500 text-white px-8 py-3 rounded font-bold text-lg hover:bg-blue-600 transition"
-          >
-            Add to Cart
-          </button>
+          {/* Centered, non-stretched Add to Cart button */}
+          <div className="w-full flex justify-center mt-8">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="bg-blue-500 text-white px-8 py-3 rounded font-bold text-lg hover:bg-blue-600 transition w-auto"
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
 
