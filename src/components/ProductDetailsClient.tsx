@@ -15,9 +15,10 @@ const FALLBACK_IMAGE = '/images/products/missing-image.png';
 
 const getPublicImageUrl = (input?: string): string | undefined => {
   if (!input) return undefined;
-  const parts = input.split('/');
-  const fileName = parts[parts.length - 1];
-  return fileName ? `/images/products/${fileName}` : undefined;
+  if (/^https?:\/\//.test(input)) return input;
+  if (input.startsWith('/images/')) return input;
+  if (input.startsWith('images/')) return `/${input}`;
+  return `/images/products/${input}`;
 };
 
 const IMAGE_WIDTH = 400;
@@ -26,7 +27,6 @@ const THUMB_SIZE = 80;
 
 export default function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const { addToCart } = useStore();
-  // Updated to support either id or _id
   const productId = String(product.id ?? product._id);
 
   const price = Number(product.price);
@@ -38,8 +38,8 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
     imagesToShow = product.images
       .map(getPublicImageUrl)
       .filter((src): src is string => Boolean(src));
-  } else if (product.image) {
-    const single = getPublicImageUrl(product.image);
+  } else if ((product as any).image) {
+    const single = getPublicImageUrl((product as any).image);
     if (single) imagesToShow = [single];
   }
   if (imagesToShow.length === 0) {
@@ -100,6 +100,7 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
               minWidth: IMAGE_WIDTH,
               maxWidth: IMAGE_WIDTH,
             }}
+            tabIndex={0} // Accessibility: focusable
           >
             <Zoom>
               <FallbackImage
@@ -119,7 +120,9 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
         <div className="flex-1 flex flex-col min-w-0 max-w-xl">
           <h1 className="text-3xl font-bold mb-2">{product.product_name}</h1>
           <p className="text-lg font-semibold mb-2">${formattedPrice}</p>
-
+          {product.description && (
+            <p className="mb-2 text-gray-700">{product.description}</p>
+          )}
           <div className="flex-1" />
 
           <button
