@@ -28,13 +28,15 @@ const ArrowButton = ({
     aria-label={left ? 'Previous' : 'Next'}
     onClick={onClick}
     className={`
-      absolute top-1/2 -translate-y-1/2 z-10
+      absolute z-10
       ${left ? '-left-8' : '-right-8'}
       bg-transparent border-none outline-none
       flex items-center justify-center w-10 h-10 cursor-pointer
       transition-transform duration-200 hover:scale-125
     `}
     style={{
+      // Move up 5px from vertical center
+      top: 'calc(50% - 5px)',
       padding: 0,
       boxShadow: 'none',
       background: 'none',
