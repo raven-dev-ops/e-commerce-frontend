@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import FallbackImage from '@/components/FallbackImage';
 import { useStore } from '@/store/useStore';
 import type { Product } from '@/types/product';
@@ -11,12 +14,6 @@ interface ProductDetailsClientProps {
   product: Product;
   relatedProducts?: Product[];
 }
-
-// DEV: For local debug, uncomment and use these as fallback related products
-// const MOCK_RELATED = [
-//   { _id: '1', product_name: 'Test Oil', price: 12, images: ['images/products/oils/fresh-air-oil-01.png'] },
-//   { _id: '2', product_name: 'Test Wax', price: 8, images: ['images/products/oils/fresh-air-oil-02.png'] },
-// ];
 
 const FALLBACK_IMAGE = '/images/products/missing-image.png';
 
@@ -32,12 +29,25 @@ const IMAGE_WIDTH = 400;
 const IMAGE_HEIGHT = 500;
 const THUMB_SIZE = 80;
 
+const carouselSettings = (count: number) => ({
+  dots: false,
+  arrows: true,
+  infinite: count > 4,
+  speed: 500,
+  slidesToShow: Math.min(4, count),
+  slidesToScroll: 1,
+  responsive: [
+    { breakpoint: 1024, settings: { slidesToShow: Math.min(3, count) } },
+    { breakpoint: 600, settings: { slidesToShow: Math.min(2, count) } },
+    { breakpoint: 480, settings: { slidesToShow: 1 } },
+  ],
+});
+
 export default function ProductDetailsClient({
   product,
   relatedProducts = [],
 }: ProductDetailsClientProps) {
   const { addToCart } = useStore();
-
   const productId = String(product._id);
 
   useEffect(() => {
@@ -55,9 +65,7 @@ export default function ProductDetailsClient({
   // Build array of images
   let imagesToShow: string[] = [];
   if (Array.isArray(product.images) && product.images.length > 0) {
-    imagesToShow = product.images
-      .map(getPublicImageUrl)
-      .filter((src): src is string => Boolean(src));
+    imagesToShow = product.images.map(getPublicImageUrl).filter((src): src is string => Boolean(src));
   } else if ((product as any).image) {
     const single = getPublicImageUrl((product as any).image);
     if (single) imagesToShow = [single];
@@ -79,7 +87,7 @@ export default function ProductDetailsClient({
 
   // Helper for rendering gold stars
   const renderStars = (rating = 0) => {
-    const rounded = Math.round(Number(rating) * 2) / 2; // for half stars in the future
+    const rounded = Math.round(Number(rating) * 2) / 2; // for future half stars
     return Array.from({ length: 5 }).map((_, i) => (
       <svg
         key={i}
@@ -153,7 +161,6 @@ export default function ProductDetailsClient({
 
         {/* Details */}
         <div className="flex-1 flex flex-col min-w-0 max-w-xl">
-          {/* Title and price row */}
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold">{product.product_name}</h1>
             <span className="text-xl font-semibold text-blue-700">${formattedPrice}</span>
@@ -170,35 +177,27 @@ export default function ProductDetailsClient({
             )}
           </div>
 
-          {/* Description */}
           {product.description && (
             <p className="mb-2 text-gray-700">{product.description}</p>
           )}
-
-          {/* Ingredients */}
           {product.ingredients && (
             <div className="mb-2">
               <span className="font-semibold">Ingredients: </span>
               <span className="text-gray-700">{product.ingredients}</span>
             </div>
           )}
-
-          {/* Benefits */}
           {product.benefits && (
             <div className="mb-2">
               <span className="font-semibold">Benefits: </span>
               <span className="text-gray-700">{product.benefits}</span>
             </div>
           )}
-
-          {/* Scent Profile */}
           {product.scent_profile && (
             <div className="mb-2">
               <span className="font-semibold">Scent Profile: </span>
               <span className="text-gray-700">{product.scent_profile}</span>
             </div>
           )}
-
           <div className="flex-1" />
 
           <button
@@ -211,37 +210,39 @@ export default function ProductDetailsClient({
         </div>
       </div>
 
-      {/* Related Products Carousel */}
+      {/* Related Products Slick Carousel */}
       {relatedProducts && relatedProducts.length > 0 && (
         <div className="mt-16">
           <h2 className="text-2xl font-bold mb-4">More from this category</h2>
-          <div className="flex gap-6 overflow-x-auto pb-2">
-            {relatedProducts.map((item) => (
-              <div
-                key={item._id}
-                className="min-w-[200px] bg-white rounded shadow p-4 flex flex-col items-center"
-              >
-                <FallbackImage
-                  src={getPublicImageUrl(item.images?.[0]) || FALLBACK_IMAGE}
-                  alt={item.product_name || 'Related product'}
-                  width={120}
-                  height={150}
-                  className="object-contain mb-2"
-                  unoptimized
-                />
-                <div className="font-semibold text-center line-clamp-2">{item.product_name}</div>
-                <div className="text-gray-500 mb-1">
-                  ${Number(item.price ?? 0).toFixed(2)}
+          <Slider {...carouselSettings(relatedProducts.length)}>
+            {relatedProducts.map((item) => {
+              const src =
+                Array.isArray(item.images) && item.images[0]
+                  ? getPublicImageUrl(item.images[0])
+                  : getPublicImageUrl(item.image) || FALLBACK_IMAGE;
+
+              return (
+                <div key={item._id} className="px-2">
+                  <div className="min-w-[200px] bg-white rounded shadow p-4 flex flex-col items-center hover:shadow-lg transition">
+                    <a href={`/products/${item._id}`} className="block w-full">
+                      <FallbackImage
+                        src={src}
+                        alt={item.product_name || 'Related product'}
+                        width={120}
+                        height={150}
+                        className="object-contain mb-2 mx-auto"
+                        unoptimized
+                      />
+                      <div className="font-semibold text-center line-clamp-2">{item.product_name}</div>
+                      <div className="text-gray-500 mb-1">
+                        ${Number(item.price ?? 0).toFixed(2)}
+                      </div>
+                    </a>
+                  </div>
                 </div>
-                <a
-                  href={`/products/${item._id}`}
-                  className="text-blue-500 hover:underline text-sm"
-                >
-                  View Product
-                </a>
-              </div>
-            ))}
-          </div>
+              );
+            })}
+          </Slider>
         </div>
       )}
     </div>
