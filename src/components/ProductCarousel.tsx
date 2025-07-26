@@ -29,7 +29,7 @@ const ArrowButton = ({
     onClick={onClick}
     className={`
       absolute top-1/2 -translate-y-1/2 z-10
-      ${left ? 'left-0' : 'right-0'}
+      ${left ? '-left-8' : '-right-8'}
       bg-transparent border-none outline-none
       flex items-center justify-center w-10 h-10 cursor-pointer
       transition-transform duration-200 hover:scale-125
