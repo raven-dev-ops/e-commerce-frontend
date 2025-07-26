@@ -27,68 +27,74 @@ function getPublicImageUrl(path?: string): string | undefined {
   return `/images/products/${path}`;
 }
 
-// Custom Arrows for React Slick
+// Flat, minimal custom arrow components
 function PrevArrow(props: any) {
   const { className, style, onClick } = props;
   return (
-    <button
-      type="button"
-      aria-label="Previous"
-      className={`${className} slick-arrow left-0 z-10 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-300 hover:bg-gray-200 transition-all`}
+    <div
+      className={className}
       style={{
         ...style,
-        left: '8px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        width: 40,
-        height: 40,
+        left: '-30px',
+        zIndex: 1,
+        background: 'none',
+        boxShadow: 'none',
+        width: '32px',
+        height: '32px',
         display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
       }}
       onClick={onClick}
       tabIndex={0}
+      aria-label="Previous"
     >
       <svg width="28" height="28" viewBox="0 0 20 20" fill="none">
         <path
           d="M13 16l-5-5 5-5"
           stroke="black"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
-    </button>
+    </div>
   );
 }
 
 function NextArrow(props: any) {
   const { className, style, onClick } = props;
   return (
-    <button
-      type="button"
-      aria-label="Next"
-      className={`${className} slick-arrow right-0 z-10 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-300 hover:bg-gray-200 transition-all`}
+    <div
+      className={className}
       style={{
         ...style,
-        right: '8px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        width: 40,
-        height: 40,
+        right: '-30px',
+        zIndex: 1,
+        background: 'none',
+        boxShadow: 'none',
+        width: '32px',
+        height: '32px',
         display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
       }}
       onClick={onClick}
       tabIndex={0}
+      aria-label="Next"
     >
       <svg width="28" height="28" viewBox="0 0 20 20" fill="none">
         <path
           d="M7 4l5 5-5 5"
           stroke="black"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
-    </button>
+    </div>
   );
 }
 
