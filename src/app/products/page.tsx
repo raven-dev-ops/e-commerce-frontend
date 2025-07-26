@@ -27,25 +27,23 @@ const CATEGORY_ORDER = ['Washes', 'Oils', 'Balms', 'Wax'];
 function getPublicImageUrl(path?: string): string | undefined {
   if (!path) return undefined;
   try {
-    // if it's a full URL, grab its pathname
     const url = new URL(path);
     return url.pathname;
   } catch {
-    // not an absolute URL
+    // not a full URL
   }
-  // already an absolute path?
   if (path.startsWith('/')) {
     return path;
   }
-  // otherwise assume it's a filename under /images/products/
   return `/images/products/${path}`;
 }
 
 async function getAllProducts(): Promise<Product[]> {
   let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
-  // ensure /api prefix
-  const base = raw.endsWith('/api') ? raw : `${raw}/api`;
+  if (raw.startsWith('http://')) {
+    raw = raw.replace(/^http:\/\//, 'https://');
+  }
+  const base = raw;  // no more `/api` forced
 
   let url = `${base}/products/?page=1`;
   const all: ApiResponseProduct[] = [];
@@ -54,7 +52,6 @@ async function getAllProducts(): Promise<Product[]> {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Failed to fetch ${url}`);
     const json = await res.json();
-    // support both paginated { results: [...] } and plain array
     const batch: ApiResponseProduct[] = Array.isArray(json.results)
       ? json.results
       : Array.isArray(json)
@@ -62,9 +59,7 @@ async function getAllProducts(): Promise<Product[]> {
         : [];
     all.push(...batch);
 
-    // advance to next page, if provided
     if (json.next) {
-      // force HTTPS, preserve only the querystring
       const next = (json.next as string).replace(/^http:\/\//, 'https://');
       const u = new URL(next);
       url = `${base}/products/${u.search}`;
@@ -112,7 +107,7 @@ export default function ProductsPage() {
       try {
         const all = await getAllProducts();
         const grouped: Record<string, Product[]> = {};
-        CATEGORY_ORDER.forEach(cat => (grouped[cat] = []));
+        CATEGORY_ORDER.forEach(cat => grouped[cat] = []);
         all.forEach(p => {
           const cat = p.category || '';
           if (grouped[cat]) grouped[cat].push(p);
@@ -162,7 +157,7 @@ export default function ProductsPage() {
 
                 return (
                   <div key={p._id} className="px-2">
-                    <div className="rounded overflow-hidden">
+                    <div className="rounded overflow-hidden transform transition-transform duration-200 hover:scale-105">
                       <Link href={`/products/${p._id}`}>
                         <a className="block">
                           <div className="relative w-full h-48">
