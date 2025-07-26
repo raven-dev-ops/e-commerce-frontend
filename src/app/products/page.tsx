@@ -43,7 +43,7 @@ async function getAllProducts(): Promise<Product[]> {
   if (raw.startsWith('http://')) {
     raw = raw.replace(/^http:\/\//, 'https://');
   }
-  const base = raw;  // no more `/api` forced
+  const base = raw;
 
   let url = `${base}/products/?page=1`;
   const all: ApiResponseProduct[] = [];
