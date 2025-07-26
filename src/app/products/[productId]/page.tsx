@@ -1,24 +1,15 @@
 // src/app/products/[productId]/page.tsx
+
 import { notFound } from 'next/navigation'
 import ProductDetailsClient from '@/components/ProductDetailsClient'
 import type { Product } from '@/types/product'
 
-interface PageProps {
-  params: {
-    productId: string
-  }
-}
-
 async function getProduct(productId: string): Promise<Product | null> {
-  // 1. grab and normalize your NEXT_PUBLIC_API_BASE_URL
-  const raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '')
-  const httpsBase = raw.startsWith('http://')
-    ? raw.replace(/^http:\/\//, 'https://')
-    : raw
-  // 2. ensure your front‑end always calls the same /api prefix
-  const apiBase = httpsBase.endsWith('/api')
-    ? httpsBase
-    : `${httpsBase}/api`
+  // Normalize base URL and force HTTPS
+  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '')
+  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://')
+  // Ensure we hit the same `/api` prefix you use elsewhere
+  const apiBase = raw.endsWith('/api') ? raw : `${raw}/api`
 
   const res = await fetch(`${apiBase}/products/${productId}/`, {
     cache: 'no-store',
@@ -29,7 +20,7 @@ async function getProduct(productId: string): Promise<Product | null> {
 
   const data = await res.json()
 
-  // flatten whatever _id / id you got back into a simple string
+  // Flatten whatever form of _id / id came back into a string
   let id = ''
   if (typeof data.id === 'string' && data.id) {
     id = data.id
@@ -52,7 +43,9 @@ async function getProduct(productId: string): Promise<Product | null> {
 
 export default async function ProductDetailPage({
   params,
-}: PageProps) {
+}: {
+  params: { productId: string }
+}) {
   const product = await getProduct(params.productId)
   if (!product) notFound()
 
