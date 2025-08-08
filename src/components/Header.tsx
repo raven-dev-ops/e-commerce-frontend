@@ -8,7 +8,8 @@ import { ShoppingCart, ShoppingBag, User, X, Shirt } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import GoogleAuthButton from '@/components/GoogleAuthButton';
 
-const BASE_URL = ((process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '')) + '/api/v1';
+import { getBaseUrl } from '@/lib/baseUrl';
+const BASE_URL = getBaseUrl();
 
 const Header: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);

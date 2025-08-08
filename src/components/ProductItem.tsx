@@ -35,30 +35,26 @@ export default function ProductItem({ product }: ProductItemProps) {
 
   return (
     <div className="p-4 rounded flex flex-col focus:outline-none">
-      <Link href={`/products/${id}`}>
-        {/* wrap in <a> to suppress focus ring */}
-        <a className="block rounded overflow-hidden focus:outline-none">
-          <div className="relative w-full h-48 mb-4">
-            <Image
-              src={src}
-              alt={product.product_name}
-              fill
-              className="rounded object-cover"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              priority
-              onError={() => setSrc(FALLBACK_IMAGE)}
-            />
-          </div>
-          <h2 className="text-xl font-semibold">{product.product_name}</h2>
-          {product.description && (
-            <p className="text-gray-700 line-clamp-2">
-              {product.description}
-            </p>
-          )}
-          <p className="text-lg font-bold mt-2">
-            ${Number(product.price).toFixed(2)}
+      <Link href={`/products/${id}`} className="block rounded overflow-hidden focus:outline-none">
+        <div className="relative w-full h-48 mb-4">
+          <Image
+            src={src}
+            alt={product.product_name}
+            fill
+            className="rounded object-cover"
+            sizes="(max-width: 768px) 100vw, 33vw"
+            onError={() => setSrc(FALLBACK_IMAGE)}
+          />
+        </div>
+        <h2 className="text-xl font-semibold">{product.product_name}</h2>
+        {product.description && (
+          <p className="text-gray-700 line-clamp-2">
+            {product.description}
           </p>
-        </a>
+        )}
+        <p className="text-lg font-bold mt-2">
+          ${Number(product.price).toFixed(2)}
+        </p>
       </Link>
     </div>
   );

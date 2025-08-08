@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useStore } from '@/store/useStore'; // Keep useStore for cart and product details logic
 import axios from 'axios';
+import { getBaseUrl } from '@/lib/baseUrl';
 
 interface ProductDetails {
   id: string | number;
@@ -15,7 +16,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from '@/components/CheckoutForm'; // Import the new component
 
 const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY;
-const API_BASE = ((process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '')) + '/api/v1';
+const API_BASE = getBaseUrl();
 
 export default function Checkout() {
 
@@ -66,7 +67,16 @@ export default function Checkout() {
     }, 0);
   }, [cart, productDetails]);
 
-  const stripePromise = loadStripe(stripePublicKey!);
+  if (!stripePublicKey) {
+    return (
+      <div className="max-w-md mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">Checkout</h1>
+        <p className="text-red-600">Stripe public key is not configured. Set NEXT_PUBLIC_STRIPE_PUBLIC_KEY.</p>
+      </div>
+    );
+  }
+
+  const stripePromise = loadStripe(stripePublicKey);
   return (
     <div className="max-w-md mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Checkout</h1>
