@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.BACKEND_URL || '';
+const RAW_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.BACKEND_URL || '').replace(/\/$/, '');
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -26,7 +26,7 @@ export default function Login() {
     setErrorMsg(null);
 
     try {
-      const res = await fetch(`${BASE_URL}/authentication/login/`, {
+      const res = await fetch(`${RAW_BASE}/authentication/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -39,9 +39,14 @@ export default function Login() {
 
       const data = await res.json();
 
-      // Assuming backend returns JWT tokens and user info:
-      localStorage.setItem('accessToken', data.access ?? '');
-      localStorage.setItem('refreshToken', data.refresh ?? '');
+      const token = data.access ?? data.accessToken ?? data.token ?? '';
+      if (token) {
+        localStorage.setItem('accessToken', token);
+        const scheme = token.includes('.') ? 'Bearer' : 'Token';
+        localStorage.setItem('authScheme', scheme);
+        // set short-lived cookie for middleware route protection (httpOnly would require API route)
+        document.cookie = `accessToken=${token}; path=/; max-age=86400; samesite=lax`;
+      }
 
       login(data.user || {});
       router.push('/');

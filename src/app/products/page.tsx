@@ -30,6 +30,13 @@ interface ApiResponseProduct {
 
 const CATEGORY_ORDER = ['Balms', 'Washes', 'Oils', 'Wax'];
 
+function getApiBase() {
+  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
+  if (!raw) return '';
+  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
+  return raw;
+}
+
 // Utilities for converting image paths
 function getPublicImageUrl(path?: string): string | undefined {
   if (!path) return undefined;
@@ -44,9 +51,8 @@ function getPublicImageUrl(path?: string): string | undefined {
 }
 
 async function getAllProducts(): Promise<Product[]> {
-  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
-  const base = raw;
+  const base = getApiBase();
+  if (!base) return [];
 
   let url = `${base}/products/?page=1`;
   const all: ApiResponseProduct[] = [];

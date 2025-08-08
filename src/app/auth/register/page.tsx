@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.BACKEND_URL || '';
+const RAW_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.BACKEND_URL || '').replace(/\/$/, '');
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -39,7 +39,7 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch(`${BASE_URL}/authentication/register/`, {
+      const res = await fetch(`${RAW_BASE}/authentication/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, password: form.password1 }),

@@ -20,8 +20,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Protect all routes except API, Next.js internals, static files, and auth pages
-    '/((?!api|_next/static|_next/image|favicon.ico|auth/login|auth/register).*)',
-    '/cart', // Explicitly include /cart if needed (though covered above)
+    // Only protect /cart here; other auth routes can be added later
+    '/cart',
   ],
 };

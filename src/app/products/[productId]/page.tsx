@@ -4,27 +4,29 @@ import { notFound } from 'next/navigation';
 import ProductDetailsClient from '@/components/ProductDetailsClient';
 import type { Product } from '@/types/product';
 
+function getApiBase() {
+  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
+  if (!raw) return '';
+  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
+  return raw;
+}
+
 // Fetch a single product by its ID
 async function getProduct(productId: string): Promise<Product | null> {
-  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
-  const url = `${raw}/products/${productId}/`;
-  // Server-side log
-  console.log('[getProduct] Fetching:', url);
+  const base = getApiBase();
+  if (!base) return null;
+  const url = `${base}/products/${productId}/`;
 
   const res = await fetch(url, { cache: 'no-store' });
 
   if (res.status === 404) {
-    console.log('[getProduct] Not found:', productId);
     return null;
   }
   if (!res.ok) {
-    console.error(`[getProduct] Failed to fetch product: HTTP ${res.status}`);
     throw new Error(`Failed to fetch product: HTTP ${res.status}`);
   }
 
   const data = await res.json();
-  console.log('[getProduct] Success:', { id: data._id, name: data.product_name, category: data.category });
 
   return {
     ...data,
@@ -36,15 +38,13 @@ async function getProduct(productId: string): Promise<Product | null> {
 
 // Fetch related products by category, excluding the current product
 async function getRelatedProducts(category: string, excludeProductId: string): Promise<Product[]> {
-  let raw = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-  if (raw.startsWith('http://')) raw = raw.replace(/^http:\/\//, 'https://');
-  const url = `${raw}/products/?category=${encodeURIComponent(category)}`;
-  console.log('[getRelatedProducts] Fetching:', url);
+  const base = getApiBase();
+  if (!base) return [];
+  const url = `${base}/products/?category=${encodeURIComponent(category)}`;
 
   const res = await fetch(url, { cache: 'no-store' });
 
   if (!res.ok) {
-    console.error(`[getRelatedProducts] Failed: HTTP ${res.status}`);
     return [];
   }
   const data = await res.json();
@@ -55,8 +55,6 @@ async function getRelatedProducts(category: string, excludeProductId: string): P
     : Array.isArray(data.results)
       ? data.results
       : [];
-
-  console.log(`[getRelatedProducts] Success, products: ${productsArr.length}`);
 
   return productsArr
     .filter((p: any) => String(p._id) !== String(excludeProductId))

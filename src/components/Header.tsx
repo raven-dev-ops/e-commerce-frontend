@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation';
 import { ShoppingCart, ShoppingBag, User, X, Shirt } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import GoogleAuthButton from '@/components/GoogleAuthButton';
+import { siteConfig } from '@/lib/siteConfig';
+
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
 
 const Header: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -73,7 +76,7 @@ const Header: React.FC = () => {
     const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
     try {
-      const res = await fetch('/auth/register/', {
+      const res = await fetch(`${API_BASE}/authentication/register/`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -103,7 +106,7 @@ const Header: React.FC = () => {
     const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
     try {
-      const res = await fetch('/auth/login/', {
+      const res = await fetch(`${API_BASE}/authentication/login/`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -111,11 +114,12 @@ const Header: React.FC = () => {
 
       const data = await res.json();
 
-      if (res.ok && data.accessToken) {
-        localStorage.setItem('accessToken', data.accessToken);
+      if (res.ok && (data.accessToken || data.access)) {
+        const token = data.accessToken || data.access;
+        localStorage.setItem('accessToken', token);
         login(data.user);
         setIsAuthenticated(true);
-        setUserEmail(data.user.email);
+        setUserEmail(data.user?.email || email);
         setShowLogin(false);
         setFormError(null);
       } else {
@@ -132,7 +136,7 @@ const Header: React.FC = () => {
     setLoading(true);
     setFormError(null);
     try {
-      const response = await fetch('https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/', {
+      const response = await fetch(`${API_BASE}/users/auth/google/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ access_token: credential }),
@@ -141,7 +145,7 @@ const Header: React.FC = () => {
       if (!response.ok) throw new Error('Google login failed');
 
       const data = await response.json();
-      localStorage.setItem('accessToken', data.access_token ?? '');
+      localStorage.setItem('accessToken', data.access_token ?? data.access ?? '');
       login(data.user || {});
       setIsAuthenticated(true);
       setUserEmail(data.user?.email ?? null);
@@ -188,8 +192,8 @@ const Header: React.FC = () => {
             {/* Logo */}
             <Link href="/" aria-label="Home" className="flex items-center">
               <Image
-                src="/images/logos/Twiin_Logo_v3.png"
-                alt="Home"
+                src={siteConfig.logoPath}
+                alt={`${siteConfig.siteName} home`}
                 width={310}
                 height={310}
                 className="transition-transform duration-200 hover:scale-110"

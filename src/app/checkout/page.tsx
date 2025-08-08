@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useStore } from '@/store/useStore'; // Keep useStore for cart and product details logic
-import { api } from '@/lib/api';
 import axios from 'axios';
 
 interface ProductDetails {
@@ -16,6 +15,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from '@/components/CheckoutForm'; // Import the new component
 
 const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY;
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
 
 export default function Checkout() {
 
@@ -34,7 +34,7 @@ export default function Checkout() {
   useEffect(() => {
     const fetchProductDetails = async (productId: string | number) => {
       try {
-        const response = await axios.get(`/api/products/${productId}/`);
+        const response = await axios.get(`${API_BASE}/products/${productId}/`);
         return response.data as ProductDetails;
       } catch (err) {
         console.error(`Error fetching product ${productId}:`, err);
@@ -69,7 +69,11 @@ export default function Checkout() {
     }, 0);
   }, [cart, productDetails]);
 
- const stripePromise = loadStripe(stripePublicKey!);
+  if (!stripePublicKey) {
+    return <div className="max-w-md mx-auto p-4 text-red-600">Stripe public key missing. Set NEXT_PUBLIC_STRIPE_PUBLIC_KEY.</div>;
+  }
+
+  const stripePromise = loadStripe(stripePublicKey!);
   return (
     <div className="max-w-md mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Checkout</h1>
@@ -105,7 +109,7 @@ export default function Checkout() {
       </div>
 
       <Elements stripe={stripePromise}>
- <CheckoutForm /> {/* Render the new component here */}
+        <CheckoutForm />
       </Elements>
     </div>
   );

@@ -6,6 +6,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
+
 type ProductDetail = {
   _id?: string | number;
   product_name?: string;
@@ -19,7 +21,8 @@ const fetchProductDetails = async (
   productId: string | number
 ): Promise<ProductDetail> => {
   try {
-    const { data } = await axios.get(`/api/products/${productId}/`);
+    if (!API_BASE) throw new Error('API base not configured');
+    const { data } = await axios.get(`${API_BASE}/products/${productId}/`);
     return data;
   } catch (error: unknown) {
     const message =

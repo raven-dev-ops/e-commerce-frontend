@@ -12,11 +12,7 @@ if (base.startsWith('http://')) {
   base = base.replace(/^http:\/\//, 'https://');
 }
 
-// 4. Ensure the path ends in /api
-if (!base.endsWith('/api')) {
-  base = `${base}/api`;
-}
-
+// Expect caller to provide full base including version, e.g. https://api.example.com/api/v1
 export const api: AxiosInstance = axios.create({
   baseURL: base,
   headers: {
@@ -29,8 +25,10 @@ api.interceptors.request.use(
     config.headers = config.headers ?? {};
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('accessToken');
+      const savedScheme = localStorage.getItem('authScheme');
       if (token) {
-        (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+        const scheme = savedScheme || (token.includes('.') ? 'Bearer' : 'Token');
+        (config.headers as Record<string, string>)['Authorization'] = `${scheme} ${token}`;
       }
     }
     return config;
@@ -42,5 +40,8 @@ api.interceptors.request.use(
 export const logout = () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('authScheme');
+    // expire client cookie used by middleware
+    document.cookie = 'accessToken=; Max-Age=0; path=/; samesite=lax';
   }
 };
