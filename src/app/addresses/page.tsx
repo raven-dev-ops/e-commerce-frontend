@@ -42,14 +42,16 @@ export default function AddressesPage() {
     setError(null);
     try {
       if (form.is_default_billing) {
-        addresses.forEach(async (a) => {
-          if (a.is_default_billing) await api.patch(`/addresses/${a.id}/`, { is_default_billing: false });
-        });
+        await Promise.all(addresses.map((a) => (
+          a.is_default_billing ? api.patch(`/addresses/${a.id}/`, { is_default_billing: false }) : Promise.resolve()
+        ))
+        );
       }
       if (form.is_default_shipping) {
-        addresses.forEach(async (a) => {
-          if (a.is_default_shipping) await api.patch(`/addresses/${a.id}/`, { is_default_shipping: false });
-        });
+        await Promise.all(addresses.map((a) => (
+          a.is_default_shipping ? api.patch(`/addresses/${a.id}/`, { is_default_shipping: false }) : Promise.resolve()
+        ))
+        );
       }
       await api.post('/addresses/', form);
       setForm({ line1: '', city: '', state: '', postal_code: '', country: 'US', is_default_billing: false, is_default_shipping: false });
