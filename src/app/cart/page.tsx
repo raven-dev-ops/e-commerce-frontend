@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useStore } from "@/store/useStore";
 import axios from "axios";
+import { getBaseUrl } from '@/lib/baseUrl';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const API_BASE = ((process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '')) + '/api/v1';
+const API_BASE = getBaseUrl();
 
 type ProductDetail = {
   _id?: string | number;

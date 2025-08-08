@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
-const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '') + '/api/v1';
+import { getBaseUrl } from '@/lib/baseUrl';
+const BASE_URL = getBaseUrl();
 
 export default function Login() {
   const [email, setEmail] = useState('');

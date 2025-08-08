@@ -17,11 +17,14 @@ export default function GoogleAuthButton({
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       if ('code' in tokenResponse && tokenResponse.code) {
-        fetch('https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/google/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: tokenResponse.code }),
-          credentials: 'include',
+        import('@/lib/baseUrl').then(({ getBaseUrl }) => {
+          const base = getBaseUrl();
+          return fetch(`${base}/auth/google/login/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: tokenResponse.code }),
+            credentials: 'include',
+          });
         })
           .then(async (res) => {
             const contentType = res.headers.get('Content-Type');

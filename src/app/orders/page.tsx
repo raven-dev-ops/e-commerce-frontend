@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import Link from 'next/link';
 
 interface OrderItem { id: number | string; product_name: string; quantity: number; price: number; }
 interface Order { id: number | string; status: string; total: number; created_at?: string; items: OrderItem[]; }
@@ -38,7 +39,7 @@ export default function OrdersPage() {
           <li key={String(o.id)} className="border rounded p-3">
             <div className="flex justify-between">
               <div>Order #{String(o.id)} — <span className="font-semibold capitalize">{o.status}</span></div>
-              <a className="text-blue-600 underline" href={`/orders/${o.id}`}>View</a>
+              <Link href={`/orders/${o.id}`} className="text-blue-600 underline">View</Link>
             </div>
             <div className="text-sm text-gray-600">Items: {o.items?.length ?? 0} — Total: ${Number(o.total).toFixed(2)}</div>
           </li>

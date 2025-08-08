@@ -7,8 +7,8 @@ const rawBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 // 2. Strip any trailing slash
 let base = rawBase.replace(/\/$/, '');
 
-// 3. Force HTTPS if someone accidentally used http://
-if (base.startsWith('http://')) {
+// 3. Force HTTPS only in production; keep http for local dev
+if (process.env.NODE_ENV === 'production' && base.startsWith('http://')) {
   base = base.replace(/^http:\/\//, 'https://');
 }
 

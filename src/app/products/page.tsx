@@ -3,9 +3,7 @@ import ProductItem from '@/components/ProductItem';
 import type { Product } from '@/types/product';
 
 async function fetchProducts(search: string, category: string): Promise<Product[]> {
-  let base = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
-  if (base.startsWith('http://')) base = base.replace(/^http:\/\//, 'https://');
-  if (!base.endsWith('/api/v1')) base = base.endsWith('/api') ? `${base}/v1` : `${base}/api/v1`;
+  const base = (await import('@/lib/baseUrl')).getBaseUrl();
 
   const params = new URLSearchParams();
   if (search) params.set('search', search);
