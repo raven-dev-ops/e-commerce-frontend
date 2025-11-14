@@ -36,3 +36,18 @@ Notes:
 ## Example Data
 
 See `public/example/*.json` for products, categories, orders, and addresses used for offline demos.
+
+## Public Repo & Security
+
+This repository is public so others can view the code and contribute via issues and pull requests. Do not commit real secrets (e.g. Stripe keys, MongoDB URIs, JWT secrets) to the repo—only use placeholder values in example configuration files and keep real credentials in local, untracked `.env` files.
+
+If you have previously pushed real secrets to a public repository, you should rotate those keys (e.g. in Stripe and MongoDB Atlas) and remove the secrets from the git history.
+
+## License
+
+This project is not open source and is provided under a custom license.
+
+- You may view and clone the code, run it locally for personal evaluation, and contribute via pull requests.
+- You may not use this code commercially, redistribute it, or create public or private forks or derivative projects without prior written permission.
+
+See `LICENSE` for the full license text.
