@@ -5,7 +5,7 @@ interface FacebookAuthButtonProps {
 }
 
 const FACEBOOK_AUTH_URL =
-  'https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/login/facebook/';
+  'https://art-bay-e7451b528caa.herokuapp.com/users/auth/login/facebook/';
 
 export default function FacebookAuthButton({ text = "Continue with Facebook" }: FacebookAuthButtonProps) {
   return (

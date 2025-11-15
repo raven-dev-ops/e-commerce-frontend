@@ -30,7 +30,7 @@ const Footer: React.FC = () => (
       </Link>
     </div>
     <div className="w-full text-center mt-2 text-xs" style={{ color: 'var(--foreground)' }}>
-      &copy; {new Date().getFullYear()} TwiinZ Beard Balm &amp; Essentials. All rights reserved.
+      &copy; {new Date().getFullYear()} Art Bay. All rights reserved.
     </div>
   </footer>
 );

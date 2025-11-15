@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | TwiinZ Beard',
+  title: 'Privacy Policy | Art Bay',
 };
 
 export default function PrivacyPolicyPage() {
@@ -16,8 +16,8 @@ export default function PrivacyPolicyPage() {
       <p>
         Data is stored using encrypted providers (Stripe, MongoDB Atlas, and Netlify). You can request a
         copy or deletion of your personal data by emailing{' '}
-        <a className="text-blue-500 underline" href="mailto:support@twiinzbeard.com">
-          support@twiinzbeard.com
+        <a className="text-blue-500 underline" href="mailto:support@art-bay.com">
+          support@art-bay.com
         </a>
         .
       </p>

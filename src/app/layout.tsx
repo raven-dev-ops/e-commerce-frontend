@@ -12,21 +12,21 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 /* –– page & social metadata –– */
 export const metadata: Metadata = {
   title: {
-    default: 'TwiinZ Beard Balms & Essentials',
-    template: '%s | TwiinZ Beard Balms & Essentials',
+    default: 'Art Bay',
+    template: '%s | Art Bay',
   },
   description:
-    'TwiinZ Beard Balm & Essentials began in 2022 in our Kansas City kitchen. Founded by seeking non-oily, lightly-fragranced, affordable grooming, we now craft 7 balms, 8 oils, 6 washes and 1 wax, with more on the way. Proudly veteran-owned and operated.',
+    'Art Bay is a curated marketplace for collectors discovering new paintings, photography, ceramics, and design objects from independent artists around the world.',
   openGraph: {
-    title: 'TwiinZ Beard Balms & Essentials',
+    title: 'Art Bay',
     description:
-      'Hand-blended beard care from Kansas City. Balms, oils, washes and wax built for performance, not perfume.',
+      'Discover limited runs and originals from emerging artists across mediums, curated by the Art Bay collective.',
     images: [
       {
         url: '/images/logos/logo.png',
         width: 800,
         height: 800,
-        alt: 'TwiinZ Beard Balms & Essentials logo',
+        alt: 'Art Bay logo',
       },
     ],
   },

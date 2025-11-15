@@ -5,7 +5,7 @@ interface InstagramAuthButtonProps {
 }
 
 const INSTAGRAM_AUTH_URL =
-  'https://twiinz-beard-backend-11dfd7158830.herokuapp.com/users/auth/login/instagram/';
+  'https://art-bay-e7451b528caa.herokuapp.com/users/auth/login/instagram/';
 
 export default function InstagramAuthButton({ text = "Continue with Instagram" }: InstagramAuthButtonProps) {
   return (

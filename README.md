@@ -1,6 +1,6 @@
-# TwiinZ Beard Frontend
+# Art Bay Frontend
 
-This is a Next.js 15 app aligned to the Django e‑commerce backend. It supports JWT and DRF Token auth flows, Stripe checkout, Mongo-backed products, and user profile/addresses/orders.
+This is a Next.js 15 storefront for the Art Bay marketplace API (`https://art-bay-e7451b528caa.herokuapp.com/`). It supports JWT and DRF Token auth flows, Stripe checkout, Mongo-backed products, and user profile/addresses/orders.
 
 ## Environment
 
@@ -9,7 +9,7 @@ This is a Next.js 15 app aligned to the Django e‑commerce backend. It supports
 - Keys starting with `NEXT_PUBLIC_` are expected to be published to the browser; other keys must remain server-only.
 
 ```
-NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain
+NEXT_PUBLIC_API_BASE_URL=https://art-bay-e7451b528caa.herokuapp.com
 NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_...
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...
 ```

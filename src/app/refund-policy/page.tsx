@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Refund Policy | TwiinZ Beard',
+  title: 'Refund Policy | Art Bay',
 };
 
 export default function RefundPolicyPage() {
@@ -10,8 +10,8 @@ export default function RefundPolicyPage() {
       <h1 className="text-3xl font-semibold">Refund &amp; Returns Policy</h1>
       <p>
         We want you to love every purchase. If a product arrives damaged or you have an issue, email{' '}
-        <a className="text-blue-500 underline" href="mailto:support@twiinzbeard.com">
-          support@twiinzbeard.com
+        <a className="text-blue-500 underline" href="mailto:support@art-bay.com">
+          support@art-bay.com
         </a>{' '}
         within 14 days of delivery. Please include your order number and photos so we can make it right.
       </p>
