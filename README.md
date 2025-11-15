@@ -4,7 +4,9 @@ This is a Next.js 15 app aligned to the Django e‑commerce backend. It supports
 
 ## Environment
 
-Set the API and Stripe keys in your environment (e.g. `.env.local`).
+- Copy `.env.example` to `.env` (or `.env.local`) and fill in the values you receive from Stripe, MongoDB Atlas, Google, etc.
+- Keep `.env` untracked—real credentials must come from your local developer machine or from Netlify environment variables.
+- Keys starting with `NEXT_PUBLIC_` are expected to be published to the browser; other keys must remain server-only.
 
 ```
 NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain
