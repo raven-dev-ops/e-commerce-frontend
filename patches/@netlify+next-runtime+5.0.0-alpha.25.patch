@@ -1,0 +1,34 @@
+diff --git a/node_modules/@netlify/next-runtime/dist/run/handlers/server.js b/node_modules/@netlify/next-runtime/dist/run/handlers/server.js
+index 6b0e41e..718d98a 100644
+--- a/node_modules/@netlify/next-runtime/dist/run/handlers/server.js
++++ b/node_modules/@netlify/next-runtime/dist/run/handlers/server.js
+@@ -13,12 +13,21 @@ export default async (request) => {
+         setRunConfig(nextConfig);
+         cacheEntry = await getCacheEntry(request);
+         const { getMockedRequestHandlers } = await import('./next.cjs');
+-        [nextHandler] = await getMockedRequestHandlers({
++        const mockedHandlers = await getMockedRequestHandlers({
+             port: 3000,
+             hostname: 'localhost',
+             dir: RUN_DIR,
+             isDev: false,
+         });
++        if (Array.isArray(mockedHandlers)) {
++            [nextHandler] = mockedHandlers;
++        }
++        else if (mockedHandlers && typeof mockedHandlers === 'object' && 'requestHandler' in mockedHandlers) {
++            nextHandler = mockedHandlers.requestHandler;
++        }
++        else {
++            throw new Error('Unable to resolve Next.js request handler from Netlify runtime');
++        }
+     }
+     const { req, res } = toReqRes(request);
+     const resProxy = nextResponseProxy(res);
+@@ -67,3 +76,6 @@ const getCacheEntry = async (request) => {
+         return await cache.get(path, { type: 'json' });
+     }
+ };
++
++
++
