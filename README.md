@@ -47,9 +47,9 @@ If you have previously pushed real secrets to a public repository, you should ro
 
 ## License
 
-This project is not open source and is provided under a custom license.
+This project is not open source and is not licensed for use, copying, modification, or distribution.
 
-- You may view and clone the code, run it locally for personal evaluation, and contribute via pull requests.
-- You may not use this code commercially, redistribute it, or create public or private forks or derivative projects without prior written permission.
+- All rights are reserved by the copyright holder.
+- No license is granted except where explicitly agreed in writing.
 
-See `LICENSE` for the full license text.
+See `LICENSE` for the full notice and details about third-party dependencies.

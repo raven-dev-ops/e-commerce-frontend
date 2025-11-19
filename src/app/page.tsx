@@ -12,38 +12,21 @@ const Page: React.FC = () => (
         Website Development Progression
       </h1>
       <section className="w-full max-w-xl bg-black/70 rounded-xl p-6 shadow-xl">
-        <div className="mb-4">
-          <h2 className="text-2xl text-yellow-300 font-semibold mb-2">Currently</h2>
-          <ul className="list-disc list-inside text-white pl-4 space-y-1">
-            <li>Now Updating Profile Page</li>
-            <li>Next Updating Cart Page</li>
-          </ul>
-        </div>
-        <div className="mb-4">
-          <h2 className="text-2xl text-green-300 font-semibold mb-2">Soon</h2>
-          <ul className="list-disc list-inside text-white pl-4 space-y-1">
-            <li>Update Merch Page</li>
-            <li>Update Profile Page</li>
-            <li>Update Admin Dashboard</li>
-          </ul>
-        </div>
         <div>
-          <h2 className="text-2xl text-blue-300 font-semibold mb-2">Pending</h2>
+          <h2 className="text-2xl text-yellow-300 font-semibold mb-2">Tasks Left</h2>
           <ul className="list-disc list-inside text-white pl-4 space-y-1">
-            <li>Ingredients List</li>
-            <li>Vendor Booth Schedule</li>
-            <li>Social Media Links
-              <ul className="list-disc list-inside ml-6 text-gray-200">
-                <li>Facebook</li>
-                <li>Instagram</li>
-                <li>Tiktok</li>
-                <li>Youtube</li>
-                <li>X</li>
-              </ul>
+            <li>
+              Finalize project <span className="font-semibold">timeline</span> in
+              <span className="ml-1 underline">timeline.md</span>
             </li>
-            <li>Domain Purchase</li>
-            <li>Stripe Account</li>
-            <li>Fourthwall Account</li>
+            <li>
+              Flesh out feature <span className="font-semibold">roadmap</span> in
+              <span className="ml-1 underline">roadmap.md</span>
+            </li>
+            <li>
+              Expand project documentation in
+              <span className="ml-1 underline">wiki.md</span>
+            </li>
           </ul>
         </div>
       </section>
